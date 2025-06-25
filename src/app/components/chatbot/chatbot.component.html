@@ -1,0 +1,58 @@
+<!-- Chatbot Trigger Button -->
+<button
+  (click)="toggleChat()"
+  class="fixed bottom-6 right-6 z-50 bg-indigo-600 hover:bg-indigo-700 text-white p-3 rounded-full shadow-lg focus:outline-none"
+>
+  💬
+</button>
+
+<!-- Chatbot Panel -->
+<div
+  *ngIf="isOpen"
+  class="fixed bottom-20 right-6 z-50 w-80 max-h-[500px] bg-white border border-gray-200 shadow-xl rounded-lg flex flex-col"
+>
+  <!-- Header -->
+  <div class="bg-indigo-600 text-white px-4 py-2 rounded-t-md flex justify-between items-center">
+    <span class="font-medium">Recruiter AI Chatbot</span>
+    <button (click)="toggleChat()" class="text-white hover:text-gray-300">✖</button>
+  </div>
+
+  <!-- Chat Body -->
+  <div class="p-3 overflow-y-auto flex-1 space-y-2 text-sm">
+    <div *ngFor="let msg of messages">
+      <div *ngIf="msg.sender === 'user'" class="text-right">
+        <span class="bg-indigo-100 text-indigo-800 px-3 py-1 rounded-lg inline-block max-w-[80%]">
+          {{ msg.text }}
+        </span>
+      </div>
+      <div *ngIf="msg.sender === 'bot'" class="text-left">
+        <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-lg inline-block max-w-[80%]">
+          {{ msg.text }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input Area -->
+  <div class="border-t px-3 py-2 bg-gray-50">
+    <div class="relative">
+      <input
+        type="text"
+        [(ngModel)]="chatMessage"
+        placeholder="Ask something..."
+        (keyup.enter)="sendMessage()"
+        class="w-full pr-10 p-2 text-sm rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+      <button
+        (click)="sendMessage()"
+        class="absolute inset-y-0 right-0 flex items-center pr-3 text-indigo-600 hover:text-indigo-800"
+      >
+        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+          <path
+            d="M2.94 2.94a1.5 1.5 0 0 1 1.68-.3l13 6a1.5 1.5 0 0 1 0 2.72l-13 6A1.5 1.5 0 0 1 2 16.5v-13a1.5 1.5 0 0 1 .94-1.56zM4 4.91v10.18L14.76 10 4 4.91z"
+          />
+        </svg>
+      </button>
+    </div>
+  </div>
+</div>
