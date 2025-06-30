@@ -70,17 +70,68 @@
         </div>
       </div>
       <div class="mt-4 w-1/2">
-  <label for="status" class="block mb-1 text-sm font-medium text-white">Update Status</label>
-  <select id="status" name="status" class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5" (change)="onStatusChange($event)" [(ngModel)]="selectedStatus">
-    <option value="">Select status</option>
-    <option value="selected">✅ Selected</option>
-    <option value="rejected">❌ Rejected</option>
-    <option value="onhold">⏸️ On Hold</option>
-<option value="interview_scheduled">📅 Interview Scheduled</option>
-<option value="underreview">🔍 Under Review</option>
-<option value="shortlisted">📌 Shortlisted</option>
-  </select>
+        <label for="status" class="block mb-1 text-sm font-medium text-white">Update Status</label>
+        <select id="status" name="status"
+          class="bg-gray-700 border border-gray-600 text-white text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
+          (change)="onStatusChange($event)" [(ngModel)]="resumeFilter.selectedStatus">
+          <option value="">Select status</option>
+          <option value="selected">✅ Selected</option>
+          <option value="rejected">❌ Rejected</option>
+          <!-- <option value="onhold">⏸️ On Hold</option> -->
+          <option value="interview_scheduled">📅 Interview Scheduled</option>
+          <!-- <option value="underreview">🔍 Under Review</option>
+          <option value="shortlisted">📌 Shortlisted</option> -->
+        </select>
+      </div>
+      <!-- Show only when 'Interview Scheduled' is selected -->
+<div class="space-y-4" *ngIf="resumeFilter.selectedStatus === 'interview_scheduled'">
+  <!-- Interview Date -->
+  <div>
+    <label class="block text-sm font-medium text-white mb-1" for="interviewDate">Interview Date</label>
+    <input
+      id="interviewDate"
+      type="date"
+      [(ngModel)]="resumeFilter.interviewDate"
+      class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <!-- Interview Time -->
+  <div>
+    <label class="block text-sm font-medium text-white mb-1" for="interviewTime">Interview Time</label>
+    <input
+      id="interviewTime"
+      type="time"
+      [(ngModel)]="resumeFilter.interviewTime"
+      class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    />
+  </div>
+
+  <!-- Interview Mode Dropdown -->
+  <div>
+    <label class="block text-sm font-medium text-white mb-1" for="interviewMode">Interview Mode</label>
+    <select
+      id="interviewMode"
+      [(ngModel)]="resumeFilter.interviewMode"
+      class="w-full rounded-lg border border-gray-300 px-3 py-2 bg-white text-black shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+    >
+      <option value="" disabled selected>Select mode</option>
+      <option value="Online">Online</option>
+      <option value="Offline">Offline</option>
+    </select>
+  </div>
+
+  <!-- Confirm Button -->
+  <div class="pt-2">
+    <button
+      
+      class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md transition duration-200"
+    (click)="sendInterviewEmail()" >
+      Confirm Interview
+    </button>
+  </div>
 </div>
+
        <div>
         <p class="text-sm text-gray-500 dark:text-gray-300">Download Resume</p>
         <div class="flex flex-wrap gap-2 mt-1">

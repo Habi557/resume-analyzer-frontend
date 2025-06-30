@@ -27,13 +27,11 @@ resumeFilter: ResumeFilter[]=[];
 scanAllresumesIsChecked: boolean=false;
 showRecentResumes: boolean = true;
 listOfResumes: any[]=[];
-//
+aiInsights?: Dashboard;
 
-pdfFiles = [
-  { name: 'Shaik Habibulla - Resume.pdf', url: '/assets/resumes/Shaik Habibulla - Resume.pdf' },
-  { name: 'Resume_Akash.pdf', url: '/assets/resumes/Resume_Akash.pdf' },
-  { name: 'Resume_Sana.pdf', url: '/assets/resumes/Resume_Sana.pdf' }
-];
+
+
+
 
 constructor(private uploadresumeService: UploadresumeService,private toaster: ToastrService){}
   ngOnInit(): void {
@@ -76,8 +74,7 @@ constructor(private uploadresumeService: UploadresumeService,private toaster: To
    // { id: 'senior', label: 'Senior Level (6+ years)' }
   ];
 
-  topSkills = ['Angular', 'TypeScript', 'Node.js', 'Machine Learning', 'Python'];
-  potentialGaps = ['AWS Certification', 'Docker', 'Kubernetes'];
+  
   openUploadModal() {
     this.showUploadModal = true;
   }
@@ -127,12 +124,14 @@ constructor(private uploadresumeService: UploadresumeService,private toaster: To
     this.uploadresumeService.getAllDashboardDetails()
     .subscribe({
       next:(result:Dashboard)=>{
-        
          this.stats[0].value=result.totalResumes;  
         this.stats[1].value=result.canditateScanned;  
         this.stats[2].value=result.bestMatch+'%';
         this.stats[3].value=result.averageExperience+'y';
+        this.aiInsights=result;
         console.log(result);
+        console.log(this.aiInsights);
+        
       },
       error:(err)=>{
         console.log(err);

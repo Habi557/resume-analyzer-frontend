@@ -1,6 +1,7 @@
 // src/app/models/resume-filter.model.ts
 export interface ResumeFilter {
-resume_id: any;
+  id: number;
+  resume_id: any;
   education: any;
   name: string;
   matchPercentage: number;
@@ -14,6 +15,11 @@ resume_id: any;
   email: string;
   phone: string;
   redFlags: string[];
+  interviewDate: string;
+  interviewTime: string;
+  interviewMode: string;
+  selectedStatus: string;
+
 
 
   // totalResumes: number;

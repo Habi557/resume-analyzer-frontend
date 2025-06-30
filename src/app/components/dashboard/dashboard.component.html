@@ -115,7 +115,7 @@
                                     <div class="flex items-center min-w-0">
                                         <div
                                             class="flex-shrink-0 h-12 w-12 bg-indigo-100 rounded-md flex items-center justify-center">
-                                            <span class="text-indigo-600 font-medium">{{resume.name.charAt(0)}}</span>
+                                            <span class="text-indigo-600 font-medium">{{resume?.name?.charAt(0) || 'N/A'}}</span>
                                         </div>
                                         <div class="ml-4 min-w-0">
                                             <div class="flex items-center">
@@ -308,29 +308,27 @@
                         <div class="space-y-4">
                             <div>
                                 <h4 class="text-sm font-medium text-gray-900">Top Matching Skills</h4>
-                                <div class="mt-2 flex flex-wrap gap-2" *ngIf="resumeFilter.length>0">
-                                    <span *ngFor="let skill of resumeFilter[0].topMatchingSkills"
+                                <div class="mt-2 flex flex-wrap gap-2">
+                                    <span *ngFor="let skills of aiInsights?.resumeAnalysisEntity?.topMatchingSkills"
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                                        {{skill}}
+                                        {{skills}}
                                     </span>
                                 </div>
                             </div>
-                            <div>
+                            <!-- <div>
                                 <h4 class="text-sm font-medium text-gray-900">Potential Gaps</h4>
                                 <div class="mt-2 flex flex-wrap gap-2">
-                                    <span *ngFor="let gap of potentialGaps"
+                                    <span 
                                         class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                                        {{gap}}
+                                        {{aiInsights.}}
                                     </span>
                                 </div>
-                            </div>
+                            </div> -->
                             <div>
                                 <h4 class="text-sm font-medium text-gray-900">AI Recommendation</h4>
                                 <div class="mt-2 p-3 bg-blue-50 rounded-md">
                                     <p class="text-sm text-blue-700">
-                                        Based on your criteria, the top 3 candidates are: John Doe (92%), Jane Smith
-                                        (88%), and Michael Johnson (85%). These candidates have strong experience with
-                                        Angular and machine learning.
+                                        {{aiInsights?.resumeAnalysisEntity?.suggestions}}
                                     </p>
                                 </div>
                             </div>

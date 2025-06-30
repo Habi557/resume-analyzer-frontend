@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { ResumeFilter } from 'src/app/models/ResumeFilter';
 import { EmailService } from 'src/app/services/email.service';
@@ -9,13 +10,20 @@ import { UploadresumeService } from 'src/app/services/uploadresume.service';
   templateUrl: './resumemodel.component.html',
   styleUrls: ['./resumemodel.component.scss']
 })
-export class ResumemodelComponent {
+export class ResumemodelComponent implements OnInit{
+  
+  constructor(private uploadService: UploadresumeService, private emailService: EmailService, private toaster: ToastrService) { }
+  ngOnInit(): void {
+   // this.resumeFilter.interviewTime = this.
+  if(this.resumeFilter.selectedStatus== undefined || this.resumeFilter.selectedStatus == null) {
+      this.resumeFilter.selectedStatus = ""; // Default value
+    }
 
-  constructor(private uploadService: UploadresumeService, private emailService :EmailService, private toaster: ToastrService) { }
+  }
   isOpen = false; // flag to control modal visibility
   @Input()
   resumeFilter!: ResumeFilter;
-  selectedStatus: string = '';
+  //selectedStatus: string = '';
 
   openModel() {
     this.isOpen = true;
@@ -78,25 +86,75 @@ export class ResumemodelComponent {
   }
 
   onStatusChange(event: Event): void {
-  const newValue = (event.target as HTMLSelectElement).value;
-  console.log('Resume status changed to:', newValue);
-  this.emailService.sendEmail(this.resumeFilter.resume_id.id, newValue).subscribe({
-    next: (response: string) => {
-      console.log('Email sent successfully:', response);
-      this.toaster.success(response, 'Success');
-      //this.handleStatusChange(newValue);
-    },
-    error: (error) => {
-      console.error('Error sending email:', error);
-      this.toaster.error(error, 'Error');
-    }
-  });
+    const newValue = (event.target as HTMLSelectElement).value;
+    console.log('Resume status changed to:', newValue);
+    if (newValue != 'interview_scheduled') {
+      this.emailService.sendEmail(this.resumeFilter.id, newValue).subscribe({
+        next: (response: string) => {
+          console.log('Email sent successfully:', response);
+          this.toaster.success(response, 'Success');
+          //this.handleStatusChange(newValue);
+        },
+        error: (error: HttpErrorResponse) => {
+          try {
+            const parsed = JSON.parse(error.error);
+            this.toaster.error(parsed.detail, 'Error');
 
-  // Optionally perform actions like:
-  // - Update DB
-  // - Show toast
-  // - Trigger email
-}
+          } catch (e) {
+          this.toaster.error("Could not parse error: ", 'Error');
+
+          }
+
+        }
+      });
+    }
+  }
+
+  sendInterviewEmail() {
+    
+    const time=this.formatTime(this.resumeFilter.interviewTime);
+    console.log('time',time);
+    if (this.resumeFilter.interviewDate && this.resumeFilter.interviewTime  && this.resumeFilter.interviewMode) {
+      this.emailService.sendEmail(
+        this.resumeFilter.id,
+        'interview_scheduled',
+        this.resumeFilter.interviewDate,
+        this.resumeFilter.interviewTime,
+        this.resumeFilter.interviewMode
+      ).subscribe({
+        next: (response: string) => {
+          console.log('Interview email sent successlly:', response);
+          this.toaster.success('Interview email sent successlly:', 'Success');
+          this.closeModel();
+        },
+        error: (error: HttpErrorResponse) => {
+            try {
+            const parsed = JSON.parse(error.error);
+            this.toaster.error(parsed.detail, 'Error');
+
+          } catch (e) {
+          this.toaster.error("Could not parse error: ", 'Error');
+
+          }
+        }
+      });
+    } else {
+      this.toaster.error('Please fill all interview details', 'Error');
+    }
+  }
+  formatTime(time24: string): string {
+    const [hourStr, minute] = time24.split(':');
+    let hour = +hourStr;
+    const ampm = hour >= 12 ? 'PM' : 'AM';
+    hour = hour % 12 || 12;
+    return `${this.pad(hour)}:${minute} ${ampm}`;
+  }
+
+  pad(num: number): string {
+    return num < 10 ? '0' + num : '' + num;
+  }
+
+
 
 
 
