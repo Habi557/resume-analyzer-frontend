@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output } from '@angular/core';
-import { HttpEventType } from '@angular/common/http';
+import { HttpErrorResponse, HttpEventType } from '@angular/common/http';
 import { UploadresumeService } from 'src/app/services/uploadresume.service';
 import { ToastrService } from 'ngx-toastr';
 @Component({
@@ -93,10 +93,14 @@ export class UploadresumeComponent {
         }
 
       },
-      error: (err) => {
+      error: (err: HttpErrorResponse) => {
         this.isUploading = false;
         console.log(err)
-        this.errorMessage = err.error?.message || 'Upload failed. Please try again.';
+        if (typeof err === 'string') {
+          this.errorMessage = err || 'Upload failed. Please try again.';
+        } else {
+          this.errorMessage = err.error || 'Upload failed. Please try again.';
+        }
       }
     });
   }

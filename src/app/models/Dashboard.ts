@@ -1,11 +1,9 @@
-import { ResumeFilter } from "./ResumeFilter";
+import { ResumeAnalysis } from "./ResumeAnalysis";
 
 export interface Dashboard {
        totalResumes: number;
-       totalResumePercentage: number;
        canditateScanned: number;
-       totalCanditatePercentage: number;
        bestMatch: number;
        averageExperience: number;
-       resumeAnalysisEntity: ResumeFilter;
+       resumeAnalysisEntity: ResumeAnalysis;
 }

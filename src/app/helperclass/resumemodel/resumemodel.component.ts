@@ -1,7 +1,7 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
-import { ResumeFilter } from 'src/app/models/ResumeFilter';
+import { ResumeAnalysis } from 'src/app/models/ResumeAnalysis';
 import { EmailService } from 'src/app/services/email.service';
 import { UploadresumeService } from 'src/app/services/uploadresume.service';
 
@@ -22,12 +22,13 @@ export class ResumemodelComponent implements OnInit{
   }
   isOpen = false; // flag to control modal visibility
   @Input()
-  resumeFilter!: ResumeFilter;
+  resumeFilter!: ResumeAnalysis;
   //selectedStatus: string = '';
 
   openModel() {
     this.isOpen = true;
     //document.body.style.overflow = 'hidden'; // optional: disable background scroll
+    console.log("Modal opened with resumeFilter:", this.resumeFilter);
 
   }
 

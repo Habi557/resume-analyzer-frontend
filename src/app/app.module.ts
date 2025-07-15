@@ -13,6 +13,8 @@ import { ResumemodelComponent } from './helperclass/resumemodel/resumemodel.comp
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
+import { StatsCardComponent } from './components/stats-card/stats-card.component';
+import { CustomdateformatPipe } from './pipes/customdateformat.pipe';
 
 @NgModule({
   declarations: [
@@ -21,7 +23,9 @@ import { ChatbotComponent } from './components/chatbot/chatbot.component';
     UploadresumeComponent,
     SpinnerComponent,
     ResumemodelComponent,
-    ChatbotComponent
+    ChatbotComponent,
+    StatsCardComponent,
+    CustomdateformatPipe
   ],
   imports: [
     BrowserModule,

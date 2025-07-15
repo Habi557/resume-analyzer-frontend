@@ -10,7 +10,7 @@ export class ChatbotService {
   constructor(private http: HttpClient) { };
 
   callAi(userQuery: string): Observable<string> {
-    return this.http.get(`${this.apiUrl}chatbot/query?userQuery=${userQuery}`, { responseType: 'text' as 'text' });
+return this.http.get(`${this.apiUrl}chatbot/query?userQuery=${encodeURIComponent(userQuery)}`, {responseType: 'text' as 'text'});
   }
 
 }

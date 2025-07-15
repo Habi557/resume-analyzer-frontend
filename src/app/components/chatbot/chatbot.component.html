@@ -32,7 +32,15 @@
       </div>
     </div>
   </div>
-
+  
+ <!-- Typing animation (loader) -->
+  <div *ngIf="loading" class="text-left">
+    <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-lg inline-block max-w-[80%]">
+      <span class="loading-dots">
+        <span></span><span></span><span></span>
+      </span>
+    </span>
+  </div>
   <!-- Input Area -->
   <div class="border-t px-3 py-2 bg-gray-50">
     <div class="relative">

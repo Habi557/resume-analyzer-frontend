@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpEvent, HttpRequest, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ResumeFilter } from '../models/ResumeFilter';
+import { ResumeAnalysis } from '../models/ResumeAnalysis';
 import { Dashboard } from '../models/Dashboard';
 @Injectable({
   providedIn: 'root'
@@ -25,11 +25,14 @@ export class UploadresumeService {
   // return this.http.post(this.apiUrl,req,{});
 
   }
-  analyzeResumes(jobDescription: string, scanAllresumesIsChecked: boolean) {
-    return this.http.post(`${this.apiUrl}screen-resume?scanAllresumesIsChecked=${scanAllresumesIsChecked}&jobRole=${jobDescription}`,{responseType:'json'});
+  analyzeResumes(jobDescription: string, scanAllresumesIsChecked: boolean) : Observable<ResumeAnalysis> {
+    //return this.http.post<ResumeAnalysis>(`${this.apiUrl}screen-resume?scanAllresumesIsChecked=${scanAllresumesIsChecked}&jobRole=${jobDescription}`,{responseType:'json'});
+    const url = `${this.apiUrl}screen-resume?scanAllresumesIsChecked=${scanAllresumesIsChecked}`;
+    return this.http.post<ResumeAnalysis>(url, { jobDescription }, { responseType: 'json' });
+
   }
-  getAllAnalysiedResumes(pageNo:number,pageSize:number): Observable<ResumeFilter[]> {
-    return this.http.get<ResumeFilter[]>(`${this.apiUrl}getAllAnalysiedResumes?pageNo=${pageNo}&pageSize=${pageSize}`);
+  getAllAnalysiedResumes(pageNo:number,pageSize:number): Observable<ResumeAnalysis[]> {
+    return this.http.get<ResumeAnalysis[]>(`${this.apiUrl}getAllAnalysiedResumes?pageNo=${pageNo}&pageSize=${pageSize}`);
   }
   getAllDashboardDetails(): Observable<Dashboard> {
    return this.http.get<Dashboard>(this.apiUrl+'gellAllDashboardDetails');

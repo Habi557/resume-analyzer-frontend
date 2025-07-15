@@ -20,19 +20,19 @@
     <div class="p-4 space-y-4 max-h-[70vh] overflow-y-auto">
       <div>
         <p class="text-sm text-gray-500 dark:text-gray-300">Name</p>
-        <p class="text-base font-medium text-gray-900 dark:text-white">{{resumeFilter.name}}</p>
+        <p class="text-base font-medium text-gray-900 dark:text-white">{{resumeFilter.resume_id.name}}</p>
       </div>
       <div>
         <p class="text-sm text-gray-500 dark:text-gray-300">Experience</p>
-        <p class="text-base text-gray-900 dark:text-white">{{resumeFilter.yearsOfExperience}} years</p>
+        <p class="text-base text-gray-900 dark:text-white">{{resumeFilter.resume_id.yearsOfExperience}} years</p>
       </div>
       <div>
         <p class="text-sm text-gray-500 dark:text-gray-300">Education</p>
-        <p class="text-base text-gray-900 dark:text-white">{{resumeFilter.education}}</p>
+        <p class="text-base text-gray-900 dark:text-white">{{resumeFilter.resume_id.education}}</p>
       </div>
       <div>
         <p class="text-sm text-gray-500 dark:text-gray-300">Location</p>
-        <p class="text-base text-gray-900 dark:text-white">{{resumeFilter.address}}</p>
+        <p class="text-base text-gray-900 dark:text-white">{{resumeFilter.resume_id.address}}</p>
       </div>
       <div>
         <p class="text-sm text-gray-500 dark:text-gray-300">Match Score</p>
@@ -45,9 +45,9 @@
       <div>
         <p class="text-sm text-gray-500 dark:text-gray-300">Skills</p>
         <div class="flex flex-wrap gap-2 mt-1">
-          <span *ngFor="let skill of resumeFilter.extractedSkills"
+          <span *ngFor="let skill of resumeFilter.resume_id.skills"
                 class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-            {{ skill }}
+            {{ skill.name }}
           </span>
         </div>
       </div>

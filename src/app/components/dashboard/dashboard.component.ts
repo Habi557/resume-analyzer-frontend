@@ -3,7 +3,7 @@ import { Modal } from 'flowbite';
 import { ToastrService } from 'ngx-toastr';
 import { filter, map } from 'rxjs';
 import { Dashboard } from 'src/app/models/Dashboard';
-import { ResumeFilter } from 'src/app/models/ResumeFilter';
+import { ResumeAnalysis } from 'src/app/models/ResumeAnalysis';
 import { UploadresumeService } from 'src/app/services/uploadresume.service';
 
 @Component({
@@ -12,7 +12,23 @@ import { UploadresumeService } from 'src/app/services/uploadresume.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
- 
+  ///////////////////
+    suggestions: string[] = [
+    'Java',
+    'JavaScript',
+    'Angular',
+    'Spring Boot',
+    'React',
+    'Node.js',
+    'HTML',
+    'CSS',
+    'Python'
+  ];
+  filteredSuggestions: string[] = [];
+   selectSuggestion(suggestion: string): void {
+    this.filteredSuggestions = []; // Hide dropdown
+  }
+  /////////////////
 totalPages: number=0;
 pages: number[]=[1,2,3,4,5];
 currentPage: number=1;
@@ -23,7 +39,7 @@ selectedResume: any = null;
 showUploadModal = false;
 selectedSkills: string[] = [];
 jobDescription:string="";
-resumeFilter: ResumeFilter[]=[]; 
+resumeAnalysis: ResumeAnalysis[]=[]; 
 scanAllresumesIsChecked: boolean=false;
 showRecentResumes: boolean = true;
 listOfResumes: any[]=[];
@@ -50,23 +66,18 @@ constructor(private uploadresumeService: UploadresumeService,private toaster: To
       }
     })
   }
-  stats = [
-    { name: 'Total Resumes', value: 0, change: 12, icon: 'resume' },
-    { name: 'Candidates Screened', value: 0, change: 8, icon: 'candidate' },
-    { name: 'Best Match', value: '', change: 3, icon: 'match' },
-    { name: 'Avg. Experience', value: '4.2y', change: -1, icon: 'experience' }
-  ];
 
-  resumes = [
-    { name: 'John Doe', score: 92, experience: 5, location: 'San Francisco, CA', skills: ['Angular', 'TypeScript', 'Node.js'] },
-    { name: 'Jane Smith', score: 88, experience: 7, location: 'New York, NY', skills: ['React', 'Python', 'Machine Learning'] },
-    { name: 'Michael Johnson', score: 85, experience: 4, location: 'Austin, TX', skills: ['Vue', 'JavaScript', 'AWS'] },
-    { name: 'Sarah Williams', score: 82, experience: 3, location: 'Chicago, IL', skills: ['Angular', 'Java', 'Spring Boot'] },
-    { name: 'David Brown', score: 79, experience: 6, location: 'Seattle, WA', skills: ['React', 'Node.js', 'MongoDB'] },
-    { name: 'Habibulla', score: 99, experience: 6, location: 'India', skills: ['Angular', 'java', 'spring boot'] }
+
+  // resumes = [
+  //   { name: 'John Doe', score: 92, experience: 5, location: 'San Francisco, CA', skills: ['Angular', 'TypeScript', 'Node.js'] },
+  //   { name: 'Jane Smith', score: 88, experience: 7, location: 'New York, NY', skills: ['React', 'Python', 'Machine Learning'] },
+  //   { name: 'Michael Johnson', score: 85, experience: 4, location: 'Austin, TX', skills: ['Vue', 'JavaScript', 'AWS'] },
+  //   { name: 'Sarah Williams', score: 82, experience: 3, location: 'Chicago, IL', skills: ['Angular', 'Java', 'Spring Boot'] },
+  //   { name: 'David Brown', score: 79, experience: 6, location: 'Seattle, WA', skills: ['React', 'Node.js', 'MongoDB'] },
+  //   { name: 'Habibulla', score: 99, experience: 6, location: 'India', skills: ['Angular', 'java', 'spring boot'] }
     
 
-  ];
+  // ];
 
   experienceLevels = [
     { id: 'scanAllresumes', label: 'AnalysizeAllResumes' },
@@ -93,9 +104,9 @@ constructor(private uploadresumeService: UploadresumeService,private toaster: To
   analyzeResumes(scanAllresumesIsChecked:boolean) {
        this.uploadresumeService.analyzeResumes(this.jobDescription,scanAllresumesIsChecked)
        .subscribe({
-        next:(result :any)=>{
+        next:(result :ResumeAnalysis)=>{
           console.log(result);
-              this.resumeFilter=result; 
+              //this.resumeAnalysis=result; 
               this.getAllDashboardDetails();       
         },
         error:(err)=>{
@@ -106,13 +117,13 @@ constructor(private uploadresumeService: UploadresumeService,private toaster: To
   onLoad(currentPage:number,pageSize:number): void{
     this.uploadresumeService.getAllAnalysiedResumes(currentPage-1,pageSize)
     .subscribe({
-      next:(result: ResumeFilter[])=>{
-        // this.resumeFilter=result;
-        this.resumeFilter = result.map(resume => ({
+      next:(result: ResumeAnalysis[])=>{
+        // this.resumeAnalysis=result;
+        this.resumeAnalysis = result.map(resume => ({
           ...resume,
           analysizedTime: new Date(resume.analysizedTime)
         }));
-        console.log(this.resumeFilter);      
+        console.log(this.resumeAnalysis);      
          
       },
       error:(err)=>{
@@ -124,13 +135,12 @@ constructor(private uploadresumeService: UploadresumeService,private toaster: To
     this.uploadresumeService.getAllDashboardDetails()
     .subscribe({
       next:(result:Dashboard)=>{
-         this.stats[0].value=result.totalResumes;  
-        this.stats[1].value=result.canditateScanned;  
-        this.stats[2].value=result.bestMatch+'%';
-        this.stats[3].value=result.averageExperience+'y';
+        //  this.stats[0].value=result.totalResumes;  
+        // this.stats[1].value=result.canditateScanned;  
+        // this.stats[2].value=result.bestMatch+'%';
+        // this.stats[3].value=result.averageExperience+'y';
         this.aiInsights=result;
-        console.log(result);
-        console.log(this.aiInsights);
+        
         
       },
       error:(err)=>{
@@ -170,21 +180,21 @@ goToPreviousPage() {
 }
 sortBy(orderBy: string) {
   if(orderBy=="yearsOfExperience"){
-    this.resumeFilter.sort((a,b)=>{
-      const exper1=b.yearsOfExperience;
-     const exper2= a.yearsOfExperience;
+    this.resumeAnalysis.sort((a,b)=>{
+      const exper1=b.resume_id.yearsOfExperience;
+     const exper2= a.resume_id.yearsOfExperience;
      return exper1-exper2;
   });
   }
   if(orderBy=="matchPercentage"){
-    this.resumeFilter.sort((a,b)=>{
+    this.resumeAnalysis.sort((a,b)=>{
       const match1=b.matchPercentage;
      const match2= a.matchPercentage;
      return match1-match2;
   });
   }
   if(orderBy=="newest"){
-    this.resumeFilter
+    this.resumeAnalysis
     .sort((a, b) => b.analysizedTime.getTime() - a.analysizedTime.getTime());
 
   }
@@ -238,6 +248,20 @@ openPdf(resumeId: number) {
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
     }, 100);
+  }
+  SearchByNameOrSkill($event: Event) {
+    const searchTerm = ($event.target as HTMLInputElement).value.toLowerCase();
+    console.log(searchTerm);
+    if (searchTerm.length === 0) {
+      this.filteredSuggestions = [];
+      return;
+    }
+
+    this.filteredSuggestions = this.suggestions.filter(
+      suggestion => suggestion.toLowerCase().includes(searchTerm)
+    );
+    
+    
   }
   
 

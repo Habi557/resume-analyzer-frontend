@@ -10,6 +10,7 @@ export class ChatbotComponent {
   isOpen = false;
   chatMessage = '';
   messages: { text: string; sender: 'user' | 'bot' }[] = [];
+  loading: boolean = false;
   constructor(private chatService: ChatbotService){}
 
   toggleChat() {
@@ -26,6 +27,7 @@ export class ChatbotComponent {
 
     // Clear input
     this.chatMessage = '';
+    this.loading = true;
 
     // Fake AI response (replace with real AI integration)
     this.chatService.callAi(userQuery).subscribe({
@@ -33,10 +35,13 @@ export class ChatbotComponent {
         debugger;
         // Add bot response
         this.messages.push({ text: response, sender: 'bot' });
+        this.loading = false;
+
       },
       error: (error) => {
-        console.error('Error calling AI service:', error);
+        this.loading = false;
         this.messages.push({ text: 'Error processing your request. Please try again.', sender: 'bot' });
+
       }
     });
     // setTimeout(() => {
