@@ -3,8 +3,11 @@ import { Modal } from 'flowbite';
 import { ToastrService } from 'ngx-toastr';
 import { filter, map } from 'rxjs';
 import { Dashboard } from 'src/app/models/Dashboard';
+import { Resume } from 'src/app/models/Resume';
 import { ResumeAnalysis } from 'src/app/models/ResumeAnalysis';
+import { SearchSuggestionsService } from 'src/app/services/search-suggestions.service';
 import { UploadresumeService } from 'src/app/services/uploadresume.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,28 +15,14 @@ import { UploadresumeService } from 'src/app/services/uploadresume.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  ///////////////////
-    suggestions: string[] = [
-    'Java',
-    'JavaScript',
-    'Angular',
-    'Spring Boot',
-    'React',
-    'Node.js',
-    'HTML',
-    'CSS',
-    'Python'
-  ];
-  filteredSuggestions: string[] = [];
-   selectSuggestion(suggestion: string): void {
-    this.filteredSuggestions = []; // Hide dropdown
-  }
+ 
   /////////////////
-totalPages: number=0;
 pages: number[]=[1,2,3,4,5];
 currentPage: number=1;
 pageSize: number=2;
 selectedResume: any = null;
+filteredSuggestions: string[] = [];
+
 
 
 showUploadModal = false;
@@ -44,16 +33,16 @@ scanAllresumesIsChecked: boolean=false;
 showRecentResumes: boolean = true;
 listOfResumes: any[]=[];
 aiInsights?: Dashboard;
+inputSearch: string = '';
 
-
-
-
-
-constructor(private uploadresumeService: UploadresumeService,private toaster: ToastrService){}
+constructor(private uploadresumeService: UploadresumeService, private searchSuggestion : SearchSuggestionsService, private toaster: ToastrService){}
   ngOnInit(): void {
     this.onLoad(this.currentPage,this.pageSize);
     this.getAllDashboardDetails();
     this.getAllResumes();
+
+console.log('Running Environment:', environment);
+
   }
   getAllResumes() {
     this.uploadresumeService.getAllResumes().subscribe({
@@ -66,26 +55,6 @@ constructor(private uploadresumeService: UploadresumeService,private toaster: To
       }
     })
   }
-
-
-  // resumes = [
-  //   { name: 'John Doe', score: 92, experience: 5, location: 'San Francisco, CA', skills: ['Angular', 'TypeScript', 'Node.js'] },
-  //   { name: 'Jane Smith', score: 88, experience: 7, location: 'New York, NY', skills: ['React', 'Python', 'Machine Learning'] },
-  //   { name: 'Michael Johnson', score: 85, experience: 4, location: 'Austin, TX', skills: ['Vue', 'JavaScript', 'AWS'] },
-  //   { name: 'Sarah Williams', score: 82, experience: 3, location: 'Chicago, IL', skills: ['Angular', 'Java', 'Spring Boot'] },
-  //   { name: 'David Brown', score: 79, experience: 6, location: 'Seattle, WA', skills: ['React', 'Node.js', 'MongoDB'] },
-  //   { name: 'Habibulla', score: 99, experience: 6, location: 'India', skills: ['Angular', 'java', 'spring boot'] }
-    
-
-  // ];
-
-  experienceLevels = [
-    { id: 'scanAllresumes', label: 'AnalysizeAllResumes' },
-    //{ id: 'scanNew', label: 'Mid Level (3-5 years)' },
-   // { id: 'senior', label: 'Senior Level (6+ years)' }
-  ];
-
-  
   openUploadModal() {
     this.showUploadModal = true;
   }
@@ -123,6 +92,8 @@ constructor(private uploadresumeService: UploadresumeService,private toaster: To
           ...resume,
           analysizedTime: new Date(resume.analysizedTime)
         }));
+        console.log('Fetched resume analysis:', this.resumeAnalysis);
+        
         console.log(this.resumeAnalysis);      
          
       },
@@ -171,6 +142,7 @@ goToPage(page: number) {
   console.log("pageNumber ",page);
   this.currentPage=page;
   this.onLoad(page,this.pageSize);
+
 }
 goToPreviousPage() {
     this.pages=this.pages.map((page)=> page-5);
@@ -254,13 +226,42 @@ openPdf(resumeId: number) {
     console.log(searchTerm);
     if (searchTerm.length === 0) {
       this.filteredSuggestions = [];
+      this.onLoad(this.currentPage, this.pageSize); // Reset to original data
       return;
     }
-
-    this.filteredSuggestions = this.suggestions.filter(
-      suggestion => suggestion.toLowerCase().includes(searchTerm)
-    );
+    if (searchTerm.length > 2) {
+      this.searchSuggestion.searchToShowSuggestions(searchTerm).subscribe({
+        next: (result: string[]) => {
+          console.log('Search results:', result);
+         // this.filteredSuggestions = result.split(',').map(item => item.trim());
+         this.filteredSuggestions=result;
+        },
+        error: (err) => {
+          console.error('Search error:', err);
+          this.toaster.error('Error fetching search results', 'Error');
+        } 
+      })
+    }
     
+  }
+   selectSuggestion(suggestion: string): void {
+    this.filteredSuggestions = []; // Hide dropdown
+    this.inputSearch = suggestion; // Set input value to selected suggestion
+    console.log(`Selected suggestion: ${suggestion}`);
+    this.searchSuggestion.findResumesBySkillName(suggestion).subscribe({
+      next: (result: ResumeAnalysis[]) => {
+        console.log('Filtered resumes:', result);
+        this.resumeAnalysis=[];
+        this.resumeAnalysis = result.map(resume => ({
+          ...resume,
+          analysizedTime: new Date(resume.analysizedTime)
+        }));
+      } ,
+      error: (err) => {
+        console.error('Search error:', err);
+        this.toaster.error('Error fetching search results', 'Error');
+      }
+    });              
     
   }
   

@@ -16,7 +16,7 @@ export class LoadingInterceptor implements HttpInterceptor {
 
   intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
     // Skip showing spinner for certain requests
-    if (!request.url.includes('/chatbot/query')) {
+    if (!request.url.includes('/chatbot/query') && !request.url.includes('/search')) {
       this.loadingSerice.show();
     }
     return next.handle(request).pipe(

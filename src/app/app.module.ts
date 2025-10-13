@@ -15,6 +15,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { ChatbotComponent } from './components/chatbot/chatbot.component';
 import { StatsCardComponent } from './components/stats-card/stats-card.component';
 import { CustomdateformatPipe } from './pipes/customdateformat.pipe';
+import { ColorchangeForSelectedstatusPipe } from './pipes/colorchange-for-selectedstatus.pipe';
 
 @NgModule({
   declarations: [
@@ -25,7 +26,8 @@ import { CustomdateformatPipe } from './pipes/customdateformat.pipe';
     ResumemodelComponent,
     ChatbotComponent,
     StatsCardComponent,
-    CustomdateformatPipe
+    CustomdateformatPipe,
+    ColorchangeForSelectedstatusPipe
   ],
   imports: [
     BrowserModule,

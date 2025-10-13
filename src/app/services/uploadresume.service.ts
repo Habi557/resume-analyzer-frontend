@@ -3,12 +3,13 @@ import { HttpClient, HttpEvent, HttpRequest, HttpHeaders } from '@angular/common
 import { Observable } from 'rxjs';
 import { ResumeAnalysis } from '../models/ResumeAnalysis';
 import { Dashboard } from '../models/Dashboard';
+import { environment } from 'src/environments/environment';
 @Injectable({
   providedIn: 'root'
 })
 export class UploadresumeService {
-    
-  private apiUrl = 'http://localhost:8080/ai/'; // Replace with your API
+ 
+  private apiUrl = environment.apiUrl+'ai/'; // Replace with your API
 
   constructor(private http: HttpClient) { }
 
@@ -48,6 +49,7 @@ export class UploadresumeService {
   getAllResumes(): Observable<any> {
     return this.http.get(`${this.apiUrl}allResumes`);
   }
+  
  
   
 }

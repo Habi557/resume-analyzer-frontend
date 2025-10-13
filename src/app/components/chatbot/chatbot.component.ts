@@ -32,7 +32,6 @@ export class ChatbotComponent {
     // Fake AI response (replace with real AI integration)
     this.chatService.callAi(userQuery).subscribe({
       next: (response) => {
-        debugger;
         // Add bot response
         this.messages.push({ text: response, sender: 'bot' });
         this.loading = false;
