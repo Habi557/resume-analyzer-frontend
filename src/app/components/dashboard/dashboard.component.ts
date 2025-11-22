@@ -17,8 +17,8 @@ import { environment } from 'src/environments/environment';
 export class DashboardComponent implements OnInit {
  
   /////////////////
-pages: number[]=[1,2,3,4,5];
-currentPage: number=1;
+pages: number[]=[0,1,2,3,4];
+currentPage: number=0;
 pageSize: number=2;
 selectedResume: any = null;
 filteredSuggestions: string[] = [];
@@ -76,7 +76,9 @@ console.log('Running Environment:', environment);
         next:(result :ResumeAnalysis)=>{
           console.log(result);
               //this.resumeAnalysis=result; 
-              this.getAllDashboardDetails();       
+              this.getAllDashboardDetails();
+              this.onLoad(this.currentPage,this.pageSize);
+              this.toaster.success('Resume Analysis Started Successfully', 'Success');       
         },
         error:(err)=>{
           console.log(err);
@@ -84,7 +86,7 @@ console.log('Running Environment:', environment);
        })
   }
   onLoad(currentPage:number,pageSize:number): void{
-    this.uploadresumeService.getAllAnalysiedResumes(currentPage-1,pageSize)
+    this.uploadresumeService.getAllAnalysiedResumes(currentPage,pageSize)
     .subscribe({
       next:(result: ResumeAnalysis[])=>{
         // this.resumeAnalysis=result;
@@ -141,7 +143,12 @@ goToNextPage() {
 goToPage(page: number) {
   console.log("pageNumber ",page);
   this.currentPage=page;
+  if(this.inputSearch && this.inputSearch.trim()!==''){
+    this.selectSuggestion(this.inputSearch);
+    return;
+  }
   this.onLoad(page,this.pageSize);
+  //this.selectSuggestion(this.inputSearch);
 
 }
 goToPreviousPage() {
@@ -202,9 +209,14 @@ openPdf(resumeId: number) {
           }, 10000);
         }
       },
-      error: (error) => {
-        console.error('Download failed', error);
-      }
+     error: (err) => {
+       const reader = new FileReader();
+       reader.onload = () => {
+         console.log("Message from backend:", reader.result);
+         this.toaster.error(reader.result as string, 'Error');
+       };
+       reader.readAsText(err.error);
+     }
     })
   }
    forceDownload(blob: Blob, filename: string) {
@@ -248,7 +260,8 @@ openPdf(resumeId: number) {
     this.filteredSuggestions = []; // Hide dropdown
     this.inputSearch = suggestion; // Set input value to selected suggestion
     console.log(`Selected suggestion: ${suggestion}`);
-    this.searchSuggestion.findResumesBySkillName(suggestion).subscribe({
+    //this.currentPage=1;
+    this.searchSuggestion.findResumesBySkillName(suggestion,this.currentPage, this.pageSize).subscribe({
       next: (result: ResumeAnalysis[]) => {
         console.log('Filtered resumes:', result);
         this.resumeAnalysis=[];
@@ -264,6 +277,6 @@ openPdf(resumeId: number) {
     });              
     
   }
-  
+ 
 
 }

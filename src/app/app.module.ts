@@ -6,7 +6,7 @@ import { AppComponent } from './app.component';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { UploadresumeComponent } from './components/uploadresume/uploadresume.component';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SpinnerComponent } from './components/spinner/spinner.component';
 import { LoadingInterceptor } from './Interceptor/loading.interceptor';
 import { ResumemodelComponent } from './helperclass/resumemodel/resumemodel.component';
@@ -16,6 +16,7 @@ import { ChatbotComponent } from './components/chatbot/chatbot.component';
 import { StatsCardComponent } from './components/stats-card/stats-card.component';
 import { CustomdateformatPipe } from './pipes/customdateformat.pipe';
 import { ColorchangeForSelectedstatusPipe } from './pipes/colorchange-for-selectedstatus.pipe';
+import { LoginComponent } from './components/login/login.component';
 
 @NgModule({
   declarations: [
@@ -27,7 +28,8 @@ import { ColorchangeForSelectedstatusPipe } from './pipes/colorchange-for-select
     ChatbotComponent,
     StatsCardComponent,
     CustomdateformatPipe,
-    ColorchangeForSelectedstatusPipe
+    ColorchangeForSelectedstatusPipe,
+    LoginComponent
   ],
   imports: [
     BrowserModule,
@@ -35,6 +37,7 @@ import { ColorchangeForSelectedstatusPipe } from './pipes/colorchange-for-select
     HttpClientModule,
     FormsModule,
      BrowserAnimationsModule,
+     ReactiveFormsModule,
     ToastrModule.forRoot({
       timeOut: 3000,
       positionClass: 'toast-top-right',

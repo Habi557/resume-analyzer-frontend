@@ -19,7 +19,7 @@ export class SearchSuggestionsService {
       params: { query: searchTerm },
     });
   }
-  findResumesBySkillName(suggestion: string) :Observable<ResumeAnalysis[]> {
-    return this.http.get<ResumeAnalysis[]>(`${this.apiUrl}analysedresumes`,{params: {skillName: suggestion}} )
+  findResumesBySkillName(suggestion: string,currentPage: number,pageSize: number) :Observable<ResumeAnalysis[]> {
+    return this.http.get<ResumeAnalysis[]>(`${this.apiUrl}analysedresumes`,{params: {skillName: suggestion, currentPage: currentPage,pageSize: pageSize}} )
   }
 }

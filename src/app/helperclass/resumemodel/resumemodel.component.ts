@@ -64,8 +64,13 @@ export class ResumemodelComponent implements OnInit{
           }, 10000);
         }
       },
-      error: (error) => {
-        console.error('Download failed', error);
+      error: (err) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+          console.log("Message from backend:", reader.result);
+          this.toaster.error(reader.result as string, 'Error');
+        };
+        reader.readAsText(err.error); 
       }
     })
 

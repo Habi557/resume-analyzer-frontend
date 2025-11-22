@@ -19,7 +19,17 @@ export class LoadingInterceptor implements HttpInterceptor {
     if (!request.url.includes('/chatbot/query') && !request.url.includes('/search')) {
       this.loadingSerice.show();
     }
-    return next.handle(request).pipe(
+    const token = localStorage.getItem('token');
+    var modifiedRequest=request
+    // if(token){
+    //   modifiedRequest= request.clone({
+    //     setHeaders: {
+    //       Authorization: `Bearer ${token}`,
+    //       "Content-Type": "application/json"
+    //     }
+    //   });
+    // }
+    return next.handle(modifiedRequest).pipe(
       finalize(() => {
         this.loadingSerice.hide();
       })
