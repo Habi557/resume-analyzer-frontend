@@ -5,5 +5,5 @@ export interface Dashboard {
        canditateScanned: number;
        bestMatch: number;
        averageExperience: number;
-       resumeAnalysisEntity: ResumeAnalysis;
+       resumeAnalysisDTO: ResumeAnalysis;
 }

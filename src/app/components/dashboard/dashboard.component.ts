@@ -1,10 +1,13 @@
-import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { Route, Router } from '@angular/router';
 import { Modal } from 'flowbite';
 import { ToastrService } from 'ngx-toastr';
 import { filter, map } from 'rxjs';
+import { AuthHelperService } from 'src/app/helperclass/auth-helper.service';
 import { Dashboard } from 'src/app/models/Dashboard';
 import { Resume } from 'src/app/models/Resume';
 import { ResumeAnalysis } from 'src/app/models/ResumeAnalysis';
+import { LoginService } from 'src/app/services/login.service';
 import { SearchSuggestionsService } from 'src/app/services/search-suggestions.service';
 import { UploadresumeService } from 'src/app/services/uploadresume.service';
 import { environment } from 'src/environments/environment';
@@ -22,9 +25,6 @@ currentPage: number=0;
 pageSize: number=2;
 selectedResume: any = null;
 filteredSuggestions: string[] = [];
-
-
-
 showUploadModal = false;
 selectedSkills: string[] = [];
 jobDescription:string="";
@@ -34,12 +34,18 @@ showRecentResumes: boolean = true;
 listOfResumes: any[]=[];
 aiInsights?: Dashboard;
 inputSearch: string = '';
+profileMenuOpen = false;
+user: any;
+roles: string[] = [];
 
-constructor(private uploadresumeService: UploadresumeService, private searchSuggestion : SearchSuggestionsService, private toaster: ToastrService){}
+
+constructor(private uploadresumeService: UploadresumeService,private loginService :LoginService, private searchSuggestion : SearchSuggestionsService,private authServiceHelper: AuthHelperService, private toaster: ToastrService,private router:Router){}
   ngOnInit(): void {
     this.onLoad(this.currentPage,this.pageSize);
     this.getAllDashboardDetails();
     this.getAllResumes();
+    this.user=this.loginService.getUser();
+    this.roles = this.loginService.getUserRoles();
 
 console.log('Running Environment:', environment);
 
@@ -56,6 +62,7 @@ console.log('Running Environment:', environment);
     })
   }
   openUploadModal() {
+    
     this.showUploadModal = true;
   }
 
@@ -92,7 +99,12 @@ console.log('Running Environment:', environment);
         // this.resumeAnalysis=result;
         this.resumeAnalysis = result.map(resume => ({
           ...resume,
-          analysizedTime: new Date(resume.analysizedTime)
+          analysizedTime: new Date(resume.analysizedTime),
+          interviewDate: resume.interviewDate===null ? ' ' : resume.interviewDate, 
+          interviewTime: resume.interviewTime===null ? ' ' : resume.interviewTime,
+          interviewMode: resume.interviewMode===null ? ' ' : resume.interviewMode,
+          selectedStatus: resume.selectedStatus===null ? '' : resume.selectedStatus
+
         }));
         console.log('Fetched resume analysis:', this.resumeAnalysis);
         
@@ -108,10 +120,6 @@ console.log('Running Environment:', environment);
     this.uploadresumeService.getAllDashboardDetails()
     .subscribe({
       next:(result:Dashboard)=>{
-        //  this.stats[0].value=result.totalResumes;  
-        // this.stats[1].value=result.canditateScanned;  
-        // this.stats[2].value=result.bestMatch+'%';
-        // this.stats[3].value=result.averageExperience+'y';
         this.aiInsights=result;
         
         
@@ -138,10 +146,8 @@ console.log('Running Environment:', environment);
   }
 goToNextPage() {
  this.pages=this.pages.map((page)=> page+5);
-  console.log(this.pages)
 }
 goToPage(page: number) {
-  console.log("pageNumber ",page);
   this.currentPage=page;
   if(this.inputSearch && this.inputSearch.trim()!==''){
     this.selectSuggestion(this.inputSearch);
@@ -153,7 +159,6 @@ goToPage(page: number) {
 }
 goToPreviousPage() {
     this.pages=this.pages.map((page)=> page-5);
-      console.log(this.pages)
 
   
 }
@@ -183,59 +188,9 @@ sortBy(orderBy: string) {
 
 
 
-openPdf(resumeId: number) {
-   this.uploadresumeService.downloadResume(resumeId).subscribe({
-      next: (blob: Blob) => {
-        // Try opening in new tab first
-        const blobUrl = URL.createObjectURL(blob);
-        const newWindow = window.open(blobUrl, '_blank');
 
-        // If popup blocked or failed, force download
-        if (!newWindow || newWindow.closed) {
-          this.forceDownload(blob, 'resume.pdf');
-          URL.revokeObjectURL(blobUrl);
-        } else {
-          // Clean up only after window loads or closes
-          newWindow.onload = () => {
-            // Add delay to ensure PDF renders
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
-          };
-
-          // Fallback cleanup if onload doesn't fire
-          setTimeout(() => {
-            if (!newWindow.closed) {
-              URL.revokeObjectURL(blobUrl);
-            }
-          }, 10000);
-        }
-      },
-     error: (err) => {
-       const reader = new FileReader();
-       reader.onload = () => {
-         console.log("Message from backend:", reader.result);
-         this.toaster.error(reader.result as string, 'Error');
-       };
-       reader.readAsText(err.error);
-     }
-    })
-  }
-   forceDownload(blob: Blob, filename: string) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-
-    // Cleanup
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
-  }
   SearchByNameOrSkill($event: Event) {
     const searchTerm = ($event.target as HTMLInputElement).value.toLowerCase();
-    console.log(searchTerm);
     if (searchTerm.length === 0) {
       this.filteredSuggestions = [];
       this.onLoad(this.currentPage, this.pageSize); // Reset to original data
@@ -249,7 +204,6 @@ openPdf(resumeId: number) {
          this.filteredSuggestions=result;
         },
         error: (err) => {
-          console.error('Search error:', err);
           this.toaster.error('Error fetching search results', 'Error');
         } 
       })
@@ -259,7 +213,6 @@ openPdf(resumeId: number) {
    selectSuggestion(suggestion: string): void {
     this.filteredSuggestions = []; // Hide dropdown
     this.inputSearch = suggestion; // Set input value to selected suggestion
-    console.log(`Selected suggestion: ${suggestion}`);
     //this.currentPage=1;
     this.searchSuggestion.findResumesBySkillName(suggestion,this.currentPage, this.pageSize).subscribe({
       next: (result: ResumeAnalysis[]) => {
@@ -271,12 +224,32 @@ openPdf(resumeId: number) {
         }));
       } ,
       error: (err) => {
-        console.error('Search error:', err);
         this.toaster.error('Error fetching search results', 'Error');
       }
     });              
     
   }
+  toggleProfileMenu() {
+    this.profileMenuOpen = !this.profileMenuOpen;
+  }
+
+  logout() {
+    this.authServiceHelper.logout();
+
+  }
+
+  goToProfile() {
+    //this.router.navigate(['/profile']);
+  }
+  @HostListener('document:click', ['$event'])
+  onClickOutside(event: Event) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.relative')) {
+      this.profileMenuOpen = false;
+    }
+  }
+
+
  
 
 }

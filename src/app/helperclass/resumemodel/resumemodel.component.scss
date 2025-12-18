@@ -1,6 +1,8 @@
-// #default-modal{
-//     display: block !important;
-// z-index: 9999 !important;
-// opacity: 1 !important;
-
-// }
+/* Hide native Chrome datepicker icon */
+input[type="date"]::-webkit-calendar-picker-indicator {
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  width: 100%;
+  cursor: pointer;
+}

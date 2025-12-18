@@ -1,8 +1,12 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
+import { initFlowbite } from 'flowbite';
 import { ToastrService } from 'ngx-toastr';
+import { EditResumeDeatilsDto } from 'src/app/models/EditResumeDeatilsDto';
 import { ResumeAnalysis } from 'src/app/models/ResumeAnalysis';
+import { EditResumeService } from 'src/app/services/edit-resume.service';
 import { EmailService } from 'src/app/services/email.service';
+import { LoginService } from 'src/app/services/login.service';
 import { UploadresumeService } from 'src/app/services/uploadresume.service';
 
 @Component({
@@ -11,85 +15,126 @@ import { UploadresumeService } from 'src/app/services/uploadresume.service';
   styleUrls: ['./resumemodel.component.scss']
 })
 export class ResumemodelComponent implements OnInit{
-  
-  constructor(private uploadService: UploadresumeService, private emailService: EmailService, private toaster: ToastrService) { }
+
+  constructor(private uploadService: UploadresumeService, private emailService: EmailService,public loginService: LoginService, private editResume: EditResumeService, private toaster: ToastrService) { }
   ngOnInit(): void {
+    console.log("Resume Modal Component initialized with resumeFilter:", this.resumeFilter);
    // this.resumeFilter.interviewTime = this.
+   this.times();
   if(this.resumeFilter.selectedStatus== undefined || this.resumeFilter.selectedStatus == null) {
-      this.resumeFilter.selectedStatus = ""; // Default value
+     // this.resumeFilter.selectedStatus = " "; // Default value
     }
 
   }
+  ////////////////////////////////
+  //Testing 
+
+  selectedInterviewMode: string = '';
+interviewDate: string = '';
+
+
+
+
+
+times12Hr: string[] = [];
+
+times(): void {
+
+   const times = [];
+  for (let h = 1; h <= 12; h++) {
+    for (let m of ['00', '15', '30', '45']) {
+      times.push(`${h}:${m} AM`);
+      times.push(`${h}:${m} PM`);
+    }
+  }
+  this.times12Hr = times;
+}
+
+
+
+dropdownOptions = [
+  //'Shortlisted',
+  'Selected',
+  //'Pending Review',
+  'Rejected',
+  'Scheduled for Interview'
+];
+selectedStatus: string = '';
+selectOption(value: string) {
+  this.resumeFilter.selectedStatus = value;
+  this.selectedStatus = value;
+  console.log("value selected:", value);
+  this.isDropdownOpen = false;
+}
+onDateSelected(event: any) {
+  this.interviewDate = event.target.value;
+  console.log("Picked date:", this.interviewDate);
+}
+sendInterviewInvite() {
+  console.log("test1");
+  
+     console.log(this.resumeFilter.interviewDate);
+     
+}
+
+
+
+
+/////////////////
+
   isOpen = false; // flag to control modal visibility
   @Input()
   resumeFilter!: ResumeAnalysis;
+  editResumeDetailsDto!: EditResumeDeatilsDto;
   //selectedStatus: string = '';
+  editProfile = false;
+  isDropdownOpen = false;
 
   openModel() {
     this.isOpen = true;
+    setTimeout(() => initFlowbite(), 10);
     //document.body.style.overflow = 'hidden'; // optional: disable background scroll
     console.log("Modal opened with resumeFilter:", this.resumeFilter);
+   // document.body.classList.add('overflow-hidden');
 
   }
 
   closeModel() {
     this.isOpen = false;
     console.log("Modal closed");
+     // document.body.classList.remove('overflow-hidden');
+
 
   }
-  downloadResume(resumeId: Number): void {
-    console.log("Download resume with ID:", resumeId);
-    this.uploadService.downloadResume(resumeId).subscribe({
-      next: (blob: Blob) => {
-        // Try opening in new tab first
-        const blobUrl = URL.createObjectURL(blob);
-        const newWindow = window.open(blobUrl, '_blank');
+  saveCandidateDetails() {
+    console.log(this.resumeFilter.resume_id.name);
+    
+    const resumeDeatails=this.resumeFilter.resume_id;
+    this.editResumeDetailsDto={
+      id: resumeDeatails.id,
+      name: resumeDeatails.name,
+      email: resumeDeatails.email,
+      address: resumeDeatails.address,
+      education: resumeDeatails.education,
+      yearsOfExperience: resumeDeatails.yearsOfExperience
+    };
 
-        // If popup blocked or failed, force download
-        if (!newWindow || newWindow.closed) {
-          this.forceDownload(blob, 'resume.pdf');
-          URL.revokeObjectURL(blobUrl);
-        } else {
-          // Clean up only after window loads or closes
-          newWindow.onload = () => {
-            // Add delay to ensure PDF renders
-            setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
-          };
 
-          // Fallback cleanup if onload doesn't fire
-          setTimeout(() => {
-            if (!newWindow.closed) {
-              URL.revokeObjectURL(blobUrl);
-            }
-          }, 10000);
-        }
+    console.log("Saving candidate details for resume ID:", resumeDeatails);
+    this.editResume.updateCandidateDetails(this.editResumeDetailsDto).subscribe({
+      next: (response: string) => {
+        alert("Candidate details updated successfully.");
       },
-      error: (err) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-          console.log("Message from backend:", reader.result);
-          this.toaster.error(reader.result as string, 'Error');
-        };
-        reader.readAsText(err.error); 
+      error:(error)=>{
+        console.error("Error updating candidate details:", error);
       }
+
+      
     })
+      
 
   }
 
-  forceDownload(blob: Blob, filename: string) {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-
-    // Cleanup
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
-  }
 
   onStatusChange(event: Event): void {
     const newValue = (event.target as HTMLSelectElement).value;
@@ -120,10 +165,10 @@ export class ResumemodelComponent implements OnInit{
     
     const time=this.formatTime(this.resumeFilter.interviewTime);
     console.log('time',time);
-    if (this.resumeFilter.interviewDate && this.resumeFilter.interviewTime  && this.resumeFilter.interviewMode) {
+    if (this.resumeFilter.interviewDate && this.resumeFilter.interviewTime  && this.resumeFilter.interviewMode && this.resumeFilter.selectedStatus) {
       this.emailService.sendEmail(
         this.resumeFilter.id,
-        'interview_scheduled',
+        this.resumeFilter.selectedStatus,
         this.resumeFilter.interviewDate,
         this.resumeFilter.interviewTime,
         this.resumeFilter.interviewMode
@@ -159,6 +204,7 @@ export class ResumemodelComponent implements OnInit{
   pad(num: number): string {
     return num < 10 ? '0' + num : '' + num;
   }
+
 
 
 

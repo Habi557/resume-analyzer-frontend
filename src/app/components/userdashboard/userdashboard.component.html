@@ -1,0 +1,120 @@
+<div class="min-h-screen bg-gray-50">
+    <!-- <app-header
+    [showUploadModal]="showUploadModal"
+    [user]="user"
+    [roles]="roles"
+    [profileMenuOpen]="profileMenuOpen"
+    (toggleProfileMenuEvent)="toggleProfileMenu()"
+    (logoutEvent)="logout()"
+    (closeUploadModalEvent)="closeUploadModal()"
+    (openUploadModalEvent)="openUploadModal()"
+    (handleUploadCompleteEvent)="handleUploadComplete()"
+
+
+    ></app-header> -->
+    <!-- Outer container to center layout exactly like admin -->
+    <div class="max-w-7xl mx-auto px-6 py-6">
+
+        <!-- ===================================
+       USER STATS — CENTERED + CLEAN SPACING
+       =================================== -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+
+            <div class="bg-white p-6 shadow-sm border rounded-xl">
+                <p class="text-sm text-gray-500">My Resumes</p>
+                <h2 class="text-3xl font-bold mt-1">{{ resumeAnalysis.length }}</h2>
+            </div>
+
+            <div class="bg-white p-6 shadow-sm border rounded-xl">
+                <p class="text-sm text-gray-500">Best Match</p>
+                <h2 class="text-3xl font-bold mt-1">{{ userStats.bestMatch }}%</h2>
+            </div>
+
+            <div class="bg-white p-6 shadow-sm border rounded-xl">
+                <p class="text-sm text-gray-500">Avg. Experience</p>
+                <h2 class="text-3xl font-bold mt-1">{{ userStats.avgExperience }} years</h2>
+            </div>
+
+            <div class="bg-white p-6 shadow-sm border rounded-xl">
+                <p class="text-sm text-gray-500">Active Resume</p>
+                <h2 class="text-lg font-semibold mt-1">
+                    {{ userStats.activeResumeName || 'No Resume Uploaded' }}
+                </h2>
+            </div>
+
+        </div>
+
+        <!-- ===================================
+       MY RESUMES — BEAUTIFUL & CENTERED
+       =================================== -->
+        <div class="bg-white p-8 shadow-sm border rounded-xl mb-10">
+
+            <h2 class="text-lg font-semibold mb-5">My Resumes</h2>
+
+            <div *ngFor="let resume of resumeAnalysis"
+                class="border border-gray-200 rounded-xl p-6 mb-5 shadow-sm hover:shadow-md transition">
+
+                <div class="flex justify-between items-start">
+
+                    <!-- Resume Info -->
+                    <div class="space-y-2">
+                        <p class="text-lg font-semibold text-gray-900">{{ resume.resume_id.name }}</p>
+
+                        <div class="flex items-center gap-2 text-gray-500 text-sm">
+                            <i class="fa fa-briefcase text-gray-400"></i>
+                            <span>{{ resume.resume_id.yearsOfExperience }} years experience</span>
+                        </div>
+
+                        <!-- Match Badge -->
+                        <span class="text-xs px-3 py-1 rounded-full bg-green-100 text-green-700 inline-block">
+                            {{ resume.matchPercentage }}% Match
+                        </span>
+
+                        <!-- Red Flags -->
+                        <!-- <div *ngIf="resume.redFlags?.length > 0" class="mt-3">
+            <p class="text-red-500 font-semibold">Red Flags:</p>
+            <ul class="list-disc ml-5 text-red-500 text-sm">
+              <li *ngFor="let flag of resume.redFlags">{{ flag }}</li>
+            </ul>
+          </div> -->
+                    </div>
+
+                    <!-- View Details Button -->
+                    <button class="px-5 py-2 rounded-md bg-white border border-gray-300 hover:bg-gray-100 text-sm">
+                        View Details
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- ===================================
+       AI INSIGHTS — POLISHED + CENTERED
+       =================================== -->
+        <div class="bg-white p-8 shadow-sm border rounded-xl">
+
+            <h2 class="text-lg font-semibold mb-4">AI Insights</h2>
+
+            <!-- Top Skills -->
+            <p class="text-sm text-gray-500 font-medium">Top Skills Identified</p>
+
+            <div class="flex gap-2 flex-wrap mt-3">
+                <span *ngFor="let skill of resumeAnalysis[0]?.topMatchingSkills"
+                    class="px-3 py-1 rounded-full bg-green-100 text-green-700 text-xs font-medium">
+                    {{ skill }}
+                </span>
+            </div>
+
+            <!-- AI Recommendation -->
+            <p class="text-sm text-gray-500 font-medium mt-6">AI Recommendation</p>
+
+            <div class="mt-3 bg-blue-50 p-4 rounded-lg border border-blue-100 text-gray-700 text-sm leading-relaxed" *ngFor="let suggestion of resumeAnalysis[0]?.suggestions">
+                {{ suggestion }}
+            </div>
+
+        </div>
+
+    </div>
+</div>

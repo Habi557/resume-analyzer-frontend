@@ -1,4 +1,17 @@
  <!-- <app-dashboard></app-dashboard> 
  <app-login></app-login> -->
-<app-spinner></app-spinner>
+<app-header *ngIf="!hideHeader()"
+    [(showRecentResumes)]="showRecentResumes"
+    [showUploadModal]="showUploadModal"
+    [user]="user"
+    [roles]="roles"
+    [profileMenuOpen]="profileMenuOpen"
+    (toggleProfileMenuEvent)="toggleProfileMenu()"
+    (logoutEvent)="logout()"
+    (closeUploadModalEvent)="closeUploadModal()"
+    (openUploadModalEvent)="openUploadModal()"
+    (handleUploadCompleteEvent)="handleUploadComplete()"
+    >
+
+    </app-header><app-spinner></app-spinner>
 <router-outlet></router-outlet>

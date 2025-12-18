@@ -43,10 +43,6 @@ export class ChatbotComponent {
 
       }
     });
-    // setTimeout(() => {
-    //   const response = this.generateBotResponse(userQuery);
-    //   this.messages.push({ text: response, sender: 'bot' });
-    // }, 600);
   }
 
   generateBotResponse(query: string): string {

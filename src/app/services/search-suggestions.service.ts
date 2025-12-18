@@ -16,7 +16,7 @@ export class SearchSuggestionsService {
    searchToShowSuggestions(searchTerm: string): Observable<string[]> {
     //return this.http.get<string[]>(`${this.apiUrl}search?query=${searchTerm}`);
     return this.http.get<string[]>(`${this.apiUrl}suggestions`, {
-      params: { query: searchTerm },
+      params: { query: encodeURIComponent(searchTerm) },
     });
   }
   findResumesBySkillName(suggestion: string,currentPage: number,pageSize: number) :Observable<ResumeAnalysis[]> {

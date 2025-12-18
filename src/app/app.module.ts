@@ -17,6 +17,11 @@ import { StatsCardComponent } from './components/stats-card/stats-card.component
 import { CustomdateformatPipe } from './pipes/customdateformat.pipe';
 import { ColorchangeForSelectedstatusPipe } from './pipes/colorchange-for-selectedstatus.pipe';
 import { LoginComponent } from './components/login/login.component';
+import { AuthInterceptor } from './Interceptor/auth.interceptor';
+import { HeaderComponent } from './components/header/header.component';
+import { UserdashboardComponent } from './components/userdashboard/userdashboard.component';
+import { TestComponent } from './components/test/test.component';
+import { ShowAllResumesComponent } from './components/show-all-resumes/show-all-resumes.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +34,12 @@ import { LoginComponent } from './components/login/login.component';
     StatsCardComponent,
     CustomdateformatPipe,
     ColorchangeForSelectedstatusPipe,
-    LoginComponent
+    LoginComponent,
+    HeaderComponent,
+    UserdashboardComponent,
+    TestComponent,
+    ShowAllResumesComponent
+    
   ],
   imports: [
     BrowserModule,
@@ -47,6 +57,7 @@ import { LoginComponent } from './components/login/login.component';
     
   ],
   providers: [
+    {provide:HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi:true},
     { provide: HTTP_INTERCEPTORS, useClass: LoadingInterceptor, multi: true }
   ],
   bootstrap: [AppComponent]
