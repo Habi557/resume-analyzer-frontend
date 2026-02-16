@@ -1,20 +1,23 @@
 import { Injectable } from '@angular/core';
 import { Login } from '../models/login';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import { AuthResponse } from '../models/AuthResponse';
 import { environment } from 'src/environments/environment';
+import { Signup } from '../models/Signup';
+import { ApiResponse } from '../models/ApiResponse';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class LoginService {
-
   constructor(private http:HttpClient) { }
   private TOKEN_KEY = "accessToken";
   private REFRESH_KEY = "refreshToken";
   private USER_KEY = "userData";
+  private rolesSubject$ = new BehaviorSubject<string[]>([]);
+  rolesChange$ = this.rolesSubject$.asObservable();
   login(loginData: Login): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${environment.apiUrl}auth/login`, loginData,{ withCredentials: true });
   }
@@ -28,11 +31,14 @@ export class LoginService {
       username: data.username,
       roles: data.roles
     }));
+
   }
   removeAuthData() {
     localStorage.removeItem(this.TOKEN_KEY);
     //localStorage.removeItem(this.REFRESH_KEY);
     localStorage.removeItem(this.USER_KEY);
+        this.rolesSubject$.next([]);
+
   }
 
   getAccessToken() {
@@ -47,7 +53,10 @@ export class LoginService {
   }
   getUserRoles(): string[] {
     const user = this.getUser();
-    return user.roles.map((r:any) => r.replace('ROLE_', '')).join(', ')  || [];
+    return user.roles?.map((r:any) => r.replace('ROLE_', '')).join(', ')  || [];
+  }
+  getLoggedInUser():any {
+    const user=localStorage.getItem("userData");
   }
     hasRole(role: string): boolean {
     return this.getUserRoles().includes(role);
@@ -64,9 +73,20 @@ export class LoginService {
   isUser(): boolean {
     return this.hasRole('USER');
   }
+  notifyAuthChange() {
+    const roles=this.getUserRoles();
+    this.rolesSubject$.next(roles);
+  }
 
   logout(): Observable<string> {
     const headers = { Authorization: `Bearer ${this.getAccessToken()}` };
     return this.http.post(`${environment.apiUrl}auth/logout`, {}, { headers, responseType: 'text', withCredentials: true });
   }
+  signup(signupData: Signup): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${environment.apiUrl}auth/register`, signupData);
+  }
+  oauth2Login(): Observable<AuthResponse> {
+    return this.http.get<AuthResponse>(`${environment.apiUrl}oauth-success`, { withCredentials: true });
+  } 
+
 }

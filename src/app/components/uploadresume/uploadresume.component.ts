@@ -94,13 +94,15 @@ export class UploadresumeComponent {
 
       },
       error: (err: HttpErrorResponse) => {
+        debugger;
         this.isUploading = false;
         console.log(err)
-        if (typeof err === 'string') {
-          this.errorMessage = err || 'Upload failed. Please try again.';
-        } else {
-          this.errorMessage = err.error || 'Upload failed. Please try again.';
-        }
+        this.errorMessage = err.error.message || 'Upload failed. Please try again.';
+        // if (typeof err.error === 'string') {
+        //   this.errorMessage = err.error || 'Upload failed. Please try again.';
+        // } else {
+        //   this.errorMessage = err.error || 'Upload failed. Please try again.';
+        // }
       }
     });
   }

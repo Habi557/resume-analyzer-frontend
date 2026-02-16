@@ -1,0 +1,134 @@
+<!-- Profile Basic Information Card - Tailwind CSS - Angular 15 Compatible -->
+<div class="min-h-screen bg-gray-50">
+    <div class="max-w-7xl mx-auto px-6 py-6">
+<!-- Profile Container -->
+<div class="bg-white rounded-2xl shadow-sm border p-6">
+
+  <!-- Profile Header -->
+  <div class="flex flex-col md:flex-row md:items-center gap-6">
+
+    <!-- Profile Photo -->
+    <div class="relative w-fit">
+      <img
+        src="https://i.pravatar.cc/150"
+        alt="profile"
+        class="w-28 h-28 rounded-2xl object-cover border"
+      />
+
+      <!-- Upload Overlay Button -->
+      <button
+        class="absolute bottom-2 right-2 bg-indigo-600 text-white p-2 rounded-lg shadow hover:bg-indigo-700 transition"
+        title="Change Photo"
+      >
+        📷
+      </button>
+    </div>
+
+    <!-- Name + Role -->
+    <div class="flex-1">
+      <h2 class="text-2xl font-semibold text-gray-800">Habibulla</h2>
+      <p class="text-gray-500 mt-1">Java Full Stack Developer</p>
+
+      <!-- Quick Meta -->
+      <div class="flex flex-wrap gap-4 mt-3 text-sm text-gray-500">
+        <span>📍 Hyderabad, India</span>
+        <span>💼 3 Years Experience</span>
+        <span>🎯 Preferred: Backend Developer</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Divider -->
+  <div class="border-t my-6"></div>
+
+  <!-- Profile Details Grid -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+    <!-- Full Name -->
+    <div>
+      <label class="text-sm text-gray-500">Full Name</label>
+      <input
+        type="text"
+        value="Habibulla"
+        class="mt-1 w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+    </div>
+
+    <!-- Email -->
+    <div>
+      <label class="text-sm text-gray-500">Email</label>
+      <input
+        type="email"
+        value="habibulla@email.com"
+        class="mt-1 w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+    </div>
+
+    <!-- Phone -->
+    <div>
+      <label class="text-sm text-gray-500">Phone</label>
+      <input
+        type="text"
+        value="+91 9876543210"
+        class="mt-1 w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+    </div>
+
+    <!-- Location -->
+    <div>
+      <label class="text-sm text-gray-500">Location</label>
+      <input
+        type="text"
+        value="Hyderabad, India"
+        class="mt-1 w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+    </div>
+
+    <!-- Current Role -->
+    <div>
+      <label class="text-sm text-gray-500">Current Role / Designation</label>
+      <input
+        type="text"
+        value="Java Full Stack Developer"
+        class="mt-1 w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+    </div>
+
+    <!-- Years Experience -->
+    <div>
+      <label class="text-sm text-gray-500">Years of Experience</label>
+      <input
+        type="number"
+        value="3"
+        class="mt-1 w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+    </div>
+
+    <!-- Preferred Job Role -->
+    <div class="md:col-span-2">
+      <label class="text-sm text-gray-500">Preferred Job Role</label>
+      <input
+        type="text"
+        value="Backend Developer"
+        class="mt-1 w-full border rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      />
+    </div>
+
+  </div>
+
+  <!-- Action Buttons -->
+  <div class="flex justify-end gap-3 mt-6">
+    <button class="px-5 py-2 rounded-lg border hover:bg-gray-50 transition">
+      Cancel
+    </button>
+
+    <button class="px-5 py-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition shadow">
+      Save Changes
+    </button>
+  </div>
+
+</div>
+    </div>
+</div>
+

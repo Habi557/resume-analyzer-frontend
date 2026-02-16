@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { ResumeAnalysis } from 'src/app/models/ResumeAnalysis';
 import { ChatbotService } from 'src/app/services/chatbot.service';
 
 @Component({
@@ -9,8 +10,16 @@ import { ChatbotService } from 'src/app/services/chatbot.service';
 export class ChatbotComponent {
   isOpen = false;
   chatMessage = '';
-  messages: { text: string; sender: 'user' | 'bot' }[] = [];
+  //messages: { text: string; sender: 'user' | 'bot' }[] = [];
+  messages: {
+  text: string;
+  sender: 'user' | 'bot';
+  tableData?: ResumeAnalysis[];
+}[] = [];
+
   loading: boolean = false;
+  //showChatbotTable: boolean = false;
+  //resumeAnalysis: ResumeAnalysis[]= [];
   constructor(private chatService: ChatbotService){}
 
   toggleChat() {
@@ -33,8 +42,16 @@ export class ChatbotComponent {
     this.chatService.callAi(userQuery).subscribe({
       next: (response) => {
         // Add bot response
-        this.messages.push({ text: response, sender: 'bot' });
+        //this.messages.push({ text: response, sender: 'bot' });
         this.loading = false;
+        // this.showChatbotTable = true;
+        // this.resumeAnalysis = response;
+          this.messages.push({
+                 text: `Found ${response.length} matching resumes.`,
+                sender: 'bot',
+                tableData: response ?? []
+          });
+
 
       },
       error: (error) => {

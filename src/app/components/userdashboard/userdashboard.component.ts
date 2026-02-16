@@ -21,7 +21,9 @@ export class UserdashboardComponent implements OnInit {
   ngOnInit(): void {
     this.user=this.loginService.getUser();
     this.roles = this.loginService.getUserRoles();
-   this.loadUserData()
+    this.loadUserData();
+    this.loginService.notifyAuthChange();
+
 
   }
   loadUserData() {    

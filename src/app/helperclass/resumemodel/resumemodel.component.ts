@@ -115,7 +115,7 @@ sendInterviewInvite() {
       name: resumeDeatails.name,
       email: resumeDeatails.email,
       address: resumeDeatails.address,
-      education: resumeDeatails.education,
+      education: Array.isArray(resumeDeatails.education) ? resumeDeatails.education : [],
       yearsOfExperience: resumeDeatails.yearsOfExperience
     };
 
@@ -124,6 +124,7 @@ sendInterviewInvite() {
     this.editResume.updateCandidateDetails(this.editResumeDetailsDto).subscribe({
       next: (response: string) => {
         alert("Candidate details updated successfully.");
+        this.editProfile = false;
       },
       error:(error)=>{
         console.error("Error updating candidate details:", error);

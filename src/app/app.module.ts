@@ -22,6 +22,11 @@ import { HeaderComponent } from './components/header/header.component';
 import { UserdashboardComponent } from './components/userdashboard/userdashboard.component';
 import { TestComponent } from './components/test/test.component';
 import { ShowAllResumesComponent } from './components/show-all-resumes/show-all-resumes.component';
+import { SignupComponent } from './components/signup/signup.component';
+import { Oauth2SucessComponent } from './components/oauth2-sucess/oauth2-sucess.component';
+import { Oauth2FailureComponent } from './components/oauth2-failure/oauth2-failure.component';
+import { ProfileComponent } from './components/profile/profile.component';
+import { ChatbotfinderComponent } from './components/chatbotfinder/chatbotfinder.component';
 
 @NgModule({
   declarations: [
@@ -38,7 +43,12 @@ import { ShowAllResumesComponent } from './components/show-all-resumes/show-all-
     HeaderComponent,
     UserdashboardComponent,
     TestComponent,
-    ShowAllResumesComponent
+    ShowAllResumesComponent,
+    SignupComponent,
+    Oauth2SucessComponent,
+    Oauth2FailureComponent,
+    ProfileComponent,
+    ChatbotfinderComponent
     
   ],
   imports: [

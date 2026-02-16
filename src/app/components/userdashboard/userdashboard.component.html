@@ -78,9 +78,9 @@
             </ul>
           </div> -->
                     </div>
-
+                    <app-resumemodel #resumemodal [resumeFilter]="resume"></app-resumemodel>
                     <!-- View Details Button -->
-                    <button class="px-5 py-2 rounded-md bg-white border border-gray-300 hover:bg-gray-100 text-sm">
+                    <button class="px-5 py-2 rounded-md bg-white border border-gray-300 hover:bg-gray-100 text-sm" (click)="resumemodal.openModel()">
                         View Details
                     </button>
 

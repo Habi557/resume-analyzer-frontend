@@ -3,8 +3,6 @@
 <app-header *ngIf="!hideHeader()"
     [(showRecentResumes)]="showRecentResumes"
     [showUploadModal]="showUploadModal"
-    [user]="user"
-    [roles]="roles"
     [profileMenuOpen]="profileMenuOpen"
     (toggleProfileMenuEvent)="toggleProfileMenu()"
     (logoutEvent)="logout()"
@@ -14,4 +12,6 @@
     >
 
     </app-header><app-spinner></app-spinner>
-<router-outlet></router-outlet>
+  <!-- <main class="pt-16"> -->
+    <router-outlet></router-outlet>
+  <!-- </main>   -->

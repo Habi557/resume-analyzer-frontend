@@ -21,13 +21,14 @@ export class AppComponent {
     roles: string[] = [];
     resumeAnalysis: ResumeAnalysis[] = [];
     ngOnInit(): void {
-      this.user=this.loginService.getUser();
-      this.roles = this.loginService.getUserRoles();
+      // this.user=this.loginService.getUser();
+      // this.roles = this.loginService.getUserRoles();
      //this.loadUserData()
+     this.loginService.notifyAuthChange();
   
     }
     hideHeader() {
-    return this.router.url === '/login';  // hide on login page
+    return this.router.url === '/login' || this.router.url === '/signupForm';  // hide on login page
   }
     loadUserData() {    
       this.userdasbordService.getResumes(this.user.username).subscribe({

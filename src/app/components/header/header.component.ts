@@ -11,14 +11,17 @@ import { LoginService } from 'src/app/services/login.service';
 export class HeaderComponent  implements OnInit {
   constructor(private toaster: ToastrService,private router: Router,private loginservice: LoginService) { }
   ngOnInit(): void {
-    console.log("roles "+ this.roles);
-    
+    this.loadUser();
+   // this.loginservice.notifyAuthChange();
+    this.loginservice.rolesChange$.subscribe((roles:string[])=>{
+      this.roles=roles;
+    });
   }
-
+  roles: string[] = [];
   @Input() showRecentResumes!: boolean;
   @Input()showUploadModal!: boolean;
-  @Input()user: any;
-  @Input()roles: string[]=[];
+ // @Input()user: any;
+  //@Input()roles: string[]=[];
   @Input()profileMenuOpen!: boolean;
   @Output() logoutEvent = new EventEmitter<void>();
   @Output() goToProfileEvent = new EventEmitter<void>();
@@ -56,10 +59,12 @@ export class HeaderComponent  implements OnInit {
   this.showRecentResumesChange.emit(this.showRecentResumes);
   this.router.navigate(['/show-resumes']);
 }
-
-
-
-
+goToDashboard() {
+  this.router.navigate(['/dashboard']);
+}
+loadUser() {
+  this.roles = this.loginservice.getUserRoles();
+}
 
 
 }

@@ -7,12 +7,17 @@ import { UploadresumeService } from 'src/app/services/uploadresume.service';
   templateUrl: './stats-card.component.html',
   styleUrls: ['./stats-card.component.scss']
 })
-export class StatsCardComponent implements OnChanges {
-    @Input() dashboard?: Dashboard;
-    stats: any[] = [];
-  constructor() {}
+export class StatsCardComponent implements OnChanges, OnInit {
+  @Input() dashboard?: Dashboard;
+  stats: any[] = [];
+  constructor() { }
+  ngOnInit(): void {
+    this.loadDetails();}
   ngOnChanges(changes: SimpleChanges): void {
-     if (this.dashboard) {
+    //this.loadDetails();
+  }
+  loadDetails() {
+    if (this.dashboard) {
       this.stats = [
         { name: 'Total Resumes', value: this.dashboard.totalResumes, change: 12, icon: 'resume' },
         { name: 'Candidates Screened', value: this.dashboard.canditateScanned, change: 8, icon: 'candidate' },
@@ -22,7 +27,7 @@ export class StatsCardComponent implements OnChanges {
     }
   }
 
- 
- 
+
+
 
 }

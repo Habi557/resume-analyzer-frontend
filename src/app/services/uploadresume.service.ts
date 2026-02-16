@@ -5,6 +5,7 @@ import { ResumeAnalysis } from '../models/ResumeAnalysis';
 import { Dashboard } from '../models/Dashboard';
 import { environment } from 'src/environments/environment';
 import { LoginService } from './login.service';
+import { ApiResponse } from '../models/ApiResponse';
 @Injectable({
   providedIn: 'root'
 })
@@ -14,16 +15,20 @@ export class UploadresumeService {
 
   constructor(private http: HttpClient,private loginservice :LoginService) { }
 
-  uploadResumes(files: File[]): Observable<HttpEvent<string>> {
+  uploadResumes(files: File[]): Observable<HttpEvent<ApiResponse<string>>> {
     const formData = new FormData();
     const username=this.loginservice.getUser().username;
     files.forEach(file => formData.append('file', file, file.name));
-    const req = new HttpRequest('POST', `${this.apiUrl}upload?username=${username}`, formData, {
-      reportProgress: true,
-      responseType: 'text'
-    });
+    const req = new HttpRequest('POST', `${this.apiUrl}upload?username=${username}`, formData
+    //   , {
+    //   reportProgress: true,
+    //   responseType: 'text'
+    // }
+  );
 
     return this.http.request(req);
+    //return this.http.post<ApiResponse<string>>(`${this.apiUrl}upload?username=${username}`, formData);
+
 
   }
   analyzeResumes(jobDescription: string, scanAllresumesIsChecked: boolean) : Observable<ResumeAnalysis> {
@@ -47,8 +52,8 @@ export class UploadresumeService {
       // })
     });
   }
-  getAllResumes(): Observable<any> {
-    return this.http.get(`${this.apiUrl}allResumes`);
+  getAllResumes(pageNo:number, pageSize:number): Observable<any> {
+    return this.http.get(`${this.apiUrl}allResumes?pageNo=${pageNo}&pageSize=${pageSize}`);
   }
   
  

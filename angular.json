@@ -31,11 +31,13 @@
             ],
             "styles": [
               "node_modules/ngx-toastr/toastr.css",
-              "src/styles.scss"
+              "src/styles.css"
             ],
             "scripts": [
               "node_modules/flowbite/dist/flowbite.min.js"
+              
             ]
+
           },
           "configurations": {
             "production": {
@@ -108,7 +110,7 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.css"
             ],
             "scripts": []
           }

@@ -1,0 +1,59 @@
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950">
+
+  <div class="w-[420px] bg-[#0b1020] rounded-2xl shadow-2xl border border-white/10 p-8 text-white">
+
+    <h2 class="text-2xl font-semibold mb-1">
+      AI Resume <span class="text-indigo-400">Analyzer</span>
+    </h2>
+    <p class="text-sm text-white/60 mb-6">Create account to continue</p>
+
+    <form [formGroup]="signupForm" (ngSubmit)="submit()" class="space-y-4">
+
+      <div>
+        <label class="text-xs text-white/60">Username</label>
+         <input  formControlName="username"
+               class="w-full mt-2 px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+               placeholder="Enter your Username" />
+        <p *ngIf="signupForm.get('username')?.touched && signupForm.get('username')?.invalid"
+           class="text-xs text-red-400 mt-1">Minimum 3 characters</p>
+      </div>
+
+      <div>
+        <label class="text-xs text-white/60">Email</label>
+        <input formControlName="email"
+          placeholder="Enter your email"
+          class="w-full mt-2 px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+        <p *ngIf="signupForm.get('email')?.touched && signupForm.get('email')?.invalid"
+           class="text-xs text-red-400 mt-1">Enter valid email</p>
+      </div>
+
+      <div>
+        <label class="text-xs text-white/60">Password</label>
+        <input type="password" formControlName="password"
+          placeholder="Enter password"
+          class="w-full mt-2 px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+      </div>
+       <p *ngIf="signupForm.get('password')?.touched && signupForm.get('password')?.invalid"
+         class="text-xs text-red-400">Passwords Minimum length must be 8</p>
+      <div>
+        <label class="text-xs text-white/60">Confirm Password</label>
+        <input type="password" formControlName="confirmPassword"
+          placeholder="Confirm password"
+          class="w-full mt-2 px-4 py-3 bg-gray-800/60 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none">
+      </div>
+
+      <p *ngIf="signupForm.errors?.['notMatching'] && signupForm.touched"
+         class="text-xs text-red-400">Passwords do not match</p>
+
+      <button [disabled]="signupForm.invalid"
+        class="w-full py-2.5 mt-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-40 transition font-semibold">
+        Sign Up
+      </button>
+      <p class="text-center text-xs text-white/60 mt-4">
+        Already have an account?
+        <a routerLink="/login" class="text-indigo-400 hover:underline">Sign in</a>
+      </p>
+
+    </form>
+  </div>
+</div>

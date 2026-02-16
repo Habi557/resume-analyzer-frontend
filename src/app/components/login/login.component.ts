@@ -12,6 +12,9 @@ import { LoginService } from 'src/app/services/login.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
+loginWithGoogle() {
+  window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+}
   constructor(private fb: FormBuilder,private loginService :LoginService, private route:Router,private toaster: ToastrService) {}
 
   loginForm = this.fb.group({

@@ -43,24 +43,26 @@ constructor(private uploadresumeService: UploadresumeService,private loginServic
   ngOnInit(): void {
     this.onLoad(this.currentPage,this.pageSize);
     this.getAllDashboardDetails();
-    this.getAllResumes();
-    this.user=this.loginService.getUser();
-    this.roles = this.loginService.getUserRoles();
+    //this.getAllResumes();
+    // this.user=this.loginService.getUser();
+    // this.roles = this.loginService.getUserRoles();
+    this.loginService.notifyAuthChange();
+
 
 console.log('Running Environment:', environment);
 
   }
-  getAllResumes() {
-    this.uploadresumeService.getAllResumes().subscribe({
-      next: (result: any[]) => {
-        console.log('Fetched resumes:', result);
-        this.listOfResumes = result;
-      },
-      error: (err: any) => {
-        console.error('Error fetching resumes:', err);
-      }
-    })
-  }
+  // getAllResumes() {
+  //   this.uploadresumeService.getAllResumes().subscribe({
+  //     next: (result: any[]) => {
+  //       console.log('Fetched resumes:', result);
+  //       this.listOfResumes = result;
+  //     },
+  //     error: (err: any) => {
+  //       console.error('Error fetching resumes:', err);
+  //     }
+  //   })
+  // }
   openUploadModal() {
     
     this.showUploadModal = true;

@@ -1,3 +1,5 @@
+<div class="bg-gray-50">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 <div class="bg-white shadow-lg rounded-xl p-6 border border-gray-100">
   <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
     <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -6,7 +8,7 @@
     </svg>
     Uploaded Resumes
   </h2>
-
+<div class="max-h-[400px] overflow-y-auto">
   <ul class="divide-y divide-gray-200">
     <li *ngFor="let file of listOfResumes"
         class="py-3 flex items-center justify-between group hover:bg-gray-50 px-3 rounded-lg transition-all duration-200 cursor-pointer">
@@ -34,10 +36,15 @@
       </button>
     </li>
   </ul>
-
+    <div #anchor></div>
+</div>
   <!-- When no resumes -->
   <div *ngIf="listOfResumes?.length === 0"
        class="text-center py-6 text-gray-500">
     No resumes uploaded yet.
   </div>
 </div>
+  <!-- <div #anchor></div> -->
+    </main>
+</div>
+
