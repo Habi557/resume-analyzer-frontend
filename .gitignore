@@ -44,4 +44,5 @@ Thumbs.db
 .settings.json
 .dockerignore
 README.Docker.md
+.vscode/settings.json
 
