@@ -35,7 +35,7 @@ jobs:
       - name: Build Docker Image
         run: |
            docker build -t habibulla/airesumeimagefrontend:${{ github.sha }} .
-           docker tag habibulla/airesumeimagefrontend:${{ github.sha }} habibulla/airesumeimage:latest
+           docker tag habibulla/airesumeimagefrontend:${{ github.sha }} habibulla/airesumeimagefrontend:latest
       - name: Login into Docker
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
       - name: Push Image
@@ -55,9 +55,9 @@ jobs:
     - name: Deploy on EC2
       run: |
         ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_URL }} "
-          docker pull habibulla/airesumeimage:${{ github.sha }} &&
-          docker stop airesumeimage || true &&
-          docker rm airesumeimage || true &&
-          docker run -d -p 8080:8080 --name airesumeimage habibulla/airesumeimage:${{ github.sha }}
+          docker pull habibulla/airesumeimagefrontend:${{ github.sha }} &&
+          docker stop airesumeimagefrontend || true &&
+          docker rm airesumeimagefrontend || true &&
+          docker run -d -p 80:80 --name airesumeimagefrontend habibulla/airesumeimagefrontend:${{ github.sha }}
         "
 
