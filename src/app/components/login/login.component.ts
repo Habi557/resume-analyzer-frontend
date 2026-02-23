@@ -5,6 +5,7 @@ import { Toast, ToastrService } from 'ngx-toastr';
 import { AuthResponse } from 'src/app/models/AuthResponse';
 import { Login } from 'src/app/models/login';
 import { LoginService } from 'src/app/services/login.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -12,8 +13,10 @@ import { LoginService } from 'src/app/services/login.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
+  private apiUrl= environment.apiUrl; 
 loginWithGoogle() {
-  window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+  //window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+  window.location.href = `${this.apiUrl}oauth2/authorization/google`;
 }
   constructor(private fb: FormBuilder,private loginService :LoginService, private route:Router,private toaster: ToastrService) {}
 
