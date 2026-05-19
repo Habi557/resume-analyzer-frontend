@@ -13,9 +13,11 @@ export class StatsCardComponent implements OnChanges, OnInit {
   constructor() { }
   ngOnInit(): void {
     this.loadDetails();}
-  ngOnChanges(changes: SimpleChanges): void {
-    //this.loadDetails();
+ ngOnChanges(changes: SimpleChanges): void {
+  if (changes['dashboard'] && this.dashboard) {
+    this.loadDetails();
   }
+}
   loadDetails() {
     if (this.dashboard) {
       this.stats = [

@@ -16,9 +16,9 @@
     <div class="max-w-7xl mx-auto px-6 py-6">
 
         <!-- ===================================
-       USER STATS — CENTERED + CLEAN SPACING
+       USER STATS
        =================================== -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
+        <!-- <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-10">
 
             <div class="bg-white p-6 shadow-sm border rounded-xl">
                 <p class="text-sm text-gray-500">My Resumes</p>
@@ -42,10 +42,10 @@
                 </h2>
             </div>
 
-        </div>
+        </div> -->
 
         <!-- ===================================
-       MY RESUMES — BEAUTIFUL & CENTERED
+       MY RESUMES
        =================================== -->
         <div class="bg-white p-8 shadow-sm border rounded-xl mb-10">
 
@@ -58,9 +58,21 @@
 
                     <!-- Resume Info -->
                     <div class="space-y-2">
-                        <p class="text-lg font-semibold text-gray-900">{{ resume.resume_id.name }}</p>
+                        <div class="inline-flex items-center gap-2">
+                            <p class="text-lg font-semibold text-gray-900">{{ resume.resume_id.name }}</p>
+                            <span
+                                class="bg-green-100 text-green-800 text-xs font-medium px-3 py-0.5 rounded-full inline-flex items-center gap-1 ml-2"
+                                *ngIf="resume.selectedStatus !=null && resume.selectedStatus!=''"
+                                [ngClass]="resume.selectedStatus | colorchangeForSelectedstatus">
+                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                                    <path
+                                        d="M6 2a1 1 0 100 2h8a1 1 0 100-2H6zM4 6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V8a2 2 0 00-2-2H4zm0 2h12v8H4V8z" />
+                                </svg>
+                                {{resume.selectedStatus}}
+                            </span>
+                        </div>
 
-                        <div class="flex items-center gap-2 text-gray-500 text-sm">
+                        <div class="gap-2 text-gray-500 text-sm">
                             <i class="fa fa-briefcase text-gray-400"></i>
                             <span>{{ resume.resume_id.yearsOfExperience }} years experience</span>
                         </div>
@@ -71,18 +83,25 @@
                         </span>
 
                         <!-- Red Flags -->
-                        <!-- <div *ngIf="resume.redFlags?.length > 0" class="mt-3">
-            <p class="text-red-500 font-semibold">Red Flags:</p>
-            <ul class="list-disc ml-5 text-red-500 text-sm">
-              <li *ngFor="let flag of resume.redFlags">{{ flag }}</li>
-            </ul>
-          </div> -->
+                        <div *ngIf="resume.resume_id.redFlags.length > 0" class="mt-3">
+                            <p class="text-red-500 font-semibold">Red Flags:</p>
+                            <ul class="list-disc ml-5 text-red-500 text-sm">
+                                <li *ngFor="let flag of resume.resume_id.redFlags">{{ flag }}</li>
+                            </ul>
+                        </div>
                     </div>
                     <app-resumemodel #resumemodal [resumeFilter]="resume"></app-resumemodel>
                     <!-- View Details Button -->
-                    <button class="px-5 py-2 rounded-md bg-white border border-gray-300 hover:bg-gray-100 text-sm" (click)="resumemodal.openModel()">
-                        View Details
-                    </button>
+                    <div class="flex gap-3 m-5">
+                        <button class="px-5 py-2 rounded-md bg-white border border-gray-300 hover:bg-gray-100 text-sm"
+                            (click)="resumemodal.openModel()">
+                            View Details
+                        </button>
+                        <button class="px-5 py-2 rounded-md bg-white border border-gray-300 hover:bg-gray-100 text-sm"
+                            (click)="deleteResume(resume.resume_id.id) ">
+                            Delete
+                        </button>
+                    </div>
 
                 </div>
 
@@ -91,7 +110,7 @@
         </div>
 
         <!-- ===================================
-       AI INSIGHTS — POLISHED + CENTERED
+       AI INSIGHTS
        =================================== -->
         <div class="bg-white p-8 shadow-sm border rounded-xl">
 
@@ -110,7 +129,8 @@
             <!-- AI Recommendation -->
             <p class="text-sm text-gray-500 font-medium mt-6">AI Recommendation</p>
 
-            <div class="mt-3 bg-blue-50 p-4 rounded-lg border border-blue-100 text-gray-700 text-sm leading-relaxed" *ngFor="let suggestion of resumeAnalysis[0]?.suggestions">
+            <div class="mt-3 bg-blue-50 p-4 rounded-lg border border-blue-100 text-gray-700 text-sm leading-relaxed"
+                *ngFor="let suggestion of resumeAnalysis[0]?.suggestions">
                 {{ suggestion }}
             </div>
 

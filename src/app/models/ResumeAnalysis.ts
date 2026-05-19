@@ -13,5 +13,6 @@ export interface ResumeAnalysis {
   interviewTime: string;
   interviewMode: string;
   selectedStatus: string;
+  totalPages : number;
 }
 

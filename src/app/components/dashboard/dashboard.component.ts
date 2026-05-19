@@ -1,13 +1,16 @@
-import { AfterViewInit, Component, ElementRef, HostListener, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { Route, Router } from '@angular/router';
 import { Modal } from 'flowbite';
 import { ToastrService } from 'ngx-toastr';
-import { filter, map } from 'rxjs';
+import { filter, map, Subscription } from 'rxjs';
 import { AuthHelperService } from 'src/app/helperclass/auth-helper.service';
+import { AnalyzeStatus } from 'src/app/models/AnalyzeStatus';
 import { Dashboard } from 'src/app/models/Dashboard';
 import { Resume } from 'src/app/models/Resume';
 import { ResumeAnalysis } from 'src/app/models/ResumeAnalysis';
+import { StartAnalysisResponse } from 'src/app/models/StartAnalysisResponse';
 import { LoginService } from 'src/app/services/login.service';
+import { PollingService } from 'src/app/services/polling-service.service';
 import { SearchSuggestionsService } from 'src/app/services/search-suggestions.service';
 import { UploadresumeService } from 'src/app/services/uploadresume.service';
 import { environment } from 'src/environments/environment';
@@ -17,7 +20,7 @@ import { environment } from 'src/environments/environment';
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnInit {
+export class DashboardComponent implements OnInit ,OnDestroy {
  
   /////////////////
 pages: number[]=[0,1,2,3,4];
@@ -37,11 +40,15 @@ inputSearch: string = '';
 profileMenuOpen = false;
 user: any;
 roles: string[] = [];
+sortByOption: string = 'matchPercentage';
+sortingDirection: 'asc' | 'desc' = 'desc';
+previouscount: number = 0;
+private pollSub?: Subscription;
 
 
-constructor(private uploadresumeService: UploadresumeService,private loginService :LoginService, private searchSuggestion : SearchSuggestionsService,private authServiceHelper: AuthHelperService, private toaster: ToastrService,private router:Router){}
+constructor(private uploadresumeService: UploadresumeService,private loginService :LoginService, private searchSuggestion : SearchSuggestionsService,private authServiceHelper: AuthHelperService, private toaster: ToastrService,private router:Router,private pollingService: PollingService){}
   ngOnInit(): void {
-    this.onLoad(this.currentPage,this.pageSize);
+    this.onLoad(this.currentPage,this.pageSize,this.sortByOption,this.sortingDirection);
     this.getAllDashboardDetails();
     //this.getAllResumes();
     // this.user=this.loginService.getUser();
@@ -80,25 +87,56 @@ console.log('Running Environment:', environment);
     this.closeUploadModal();
   }
   analyzeResumes(scanAllresumesIsChecked:boolean) {
+    if(this.jobDescription.trim() === '') {
+      this.toaster.error('Job description cannot be empty', 'Error');
+      return;
+    }
        this.uploadresumeService.analyzeResumes(this.jobDescription,scanAllresumesIsChecked)
        .subscribe({
-        next:(result :ResumeAnalysis)=>{
-          console.log(result);
-              //this.resumeAnalysis=result; 
-              this.getAllDashboardDetails();
-              this.onLoad(this.currentPage,this.pageSize);
-              this.toaster.success('Resume Analysis Started Successfully', 'Success');       
+        next:(result :StartAnalysisResponse)=>{
+                // ✅ Kill any previous poll before starting new one
+                this.pollSub?.unsubscribe();
+                this.pollSub = this.pollingService.pollJobStatus(result.jobId,10000).subscribe({
+                    next: (res: AnalyzeStatus) => {
+                       // console.log('Job status:', res.status, res.processedResume, '/', res.totalResume);
+                        //this.jobStatus = res; // ✅ bind to UI
+                        this.toaster.info(`Analysis ${res.status}: ${res.processedResume} of ${res.totalResume} resumes processed`, 'Analysis Status', { timeOut: 2000 });
+                        if(res.processedResume>this.previouscount){
+                          this.previouscount =res.processedResume;
+                          this.getAllDashboardDetails();
+                          this.onLoad(this.currentPage, this.pageSize);
+                        }
+                        
+                    },
+                    complete: () => {
+                        // ✅ fires when COMPLETED or FAILED — takeWhile closes the stream
+                        this.getAllDashboardDetails();
+                        this.onLoad(this.currentPage, this.pageSize);
+                        this.toaster.success('Analysis Complete!', 'Success');
+                    },
+                    error: (err) => {
+                        console.error('Polling error', err);
+                        this.toaster.error('Polling failed', 'Error');
+                    }
+                }); 
         },
         error:(err)=>{
           console.log(err);
         }
        })
   }
-  onLoad(currentPage:number,pageSize:number): void{
-    this.uploadresumeService.getAllAnalysiedResumes(currentPage,pageSize)
+  onLoad(currentPage: number, pageSize: number, sortByOption?: string, sortingDirection?: string): void{
+    this.uploadresumeService.getAllAnalysiedResumes(currentPage,pageSize,sortByOption,sortingDirection)
     .subscribe({
       next:(result: ResumeAnalysis[])=>{
         // this.resumeAnalysis=result;
+        result.map(resume => {
+          resume.analysizedTime = new Date(resume.analysizedTime);
+          resume.interviewDate = resume.interviewDate === null ? ' ' : resume.interviewDate;
+          resume.interviewTime = resume.interviewTime === null ? ' ' : resume.interviewTime;
+          resume.interviewMode = resume.interviewMode === null ? ' ' : resume.interviewMode;
+          resume.selectedStatus = resume.selectedStatus === null ? '' : resume.selectedStatus;
+        });
         this.resumeAnalysis = result.map(resume => ({
           ...resume,
           analysizedTime: new Date(resume.analysizedTime),
@@ -155,7 +193,7 @@ goToPage(page: number) {
     this.selectSuggestion(this.inputSearch);
     return;
   }
-  this.onLoad(page,this.pageSize);
+  this.onLoad(page,this.pageSize,this.sortByOption,this.sortingDirection);
   //this.selectSuggestion(this.inputSearch);
 
 }
@@ -165,25 +203,31 @@ goToPreviousPage() {
   
 }
 sortBy(orderBy: string) {
-  if(orderBy=="yearsOfExperience"){
-    this.resumeAnalysis.sort((a,b)=>{
-      const exper1=b.resume_id.yearsOfExperience;
-     const exper2= a.resume_id.yearsOfExperience;
-     return exper1-exper2;
-  });
-  }
-  if(orderBy=="matchPercentage"){
-    this.resumeAnalysis.sort((a,b)=>{
-      const match1=b.matchPercentage;
-     const match2= a.matchPercentage;
-     return match1-match2;
-  });
-  }
-  if(orderBy=="newest"){
-    this.resumeAnalysis
-    .sort((a, b) => b.analysizedTime.getTime() - a.analysizedTime.getTime());
+  // if(orderBy=="yearsOfExperience"){
+  //   this.resumeAnalysis.sort((a,b)=>{
+  //     const exper1=b.resume_id.yearsOfExperience;
+  //    const exper2= a.resume_id.yearsOfExperience;
+  //    return exper1-exper2;
+  // });
+  // }
+  // if(orderBy=="matchPercentage"){
+  //   this.resumeAnalysis.sort((a,b)=>{
+  //     const match1=b.matchPercentage;
+  //    const match2= a.matchPercentage;
+  //    return match1-match2;
+  // });
+  // }
+  // if(orderBy=="newest"){
+  //   this.resumeAnalysis
+  //   .sort((a, b) => b.analysizedTime.getTime() - a.analysizedTime.getTime());
 
+  // }
+  this.currentPage=0;
+  this.sortByOption=orderBy;
+  if(orderBy=="yearsOfExperience" || orderBy=="matchPercentage"){
+    this.sortingDirection="desc";
   }
+  this.onLoad(this.currentPage,this.pageSize,orderBy,this.sortingDirection);
   
   
 }
@@ -250,6 +294,10 @@ sortBy(orderBy: string) {
       this.profileMenuOpen = false;
     }
   }
+
+  ngOnDestroy() {
+    this.pollSub?.unsubscribe(); // ✅ cleanup
+}
 
 
  

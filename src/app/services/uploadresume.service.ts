@@ -6,6 +6,7 @@ import { Dashboard } from '../models/Dashboard';
 import { environment } from 'src/environments/environment';
 import { LoginService } from './login.service';
 import { ApiResponse } from '../models/ApiResponse';
+import { StartAnalysisResponse } from '../models/StartAnalysisResponse';
 @Injectable({
   providedIn: 'root'
 })
@@ -31,14 +32,14 @@ export class UploadresumeService {
 
 
   }
-  analyzeResumes(jobDescription: string, scanAllresumesIsChecked: boolean) : Observable<ResumeAnalysis> {
+  analyzeResumes(jobDescription: string, scanAllresumesIsChecked: boolean) : Observable<StartAnalysisResponse> {
     //return this.http.post<ResumeAnalysis>(`${this.apiUrl}screen-resume?scanAllresumesIsChecked=${scanAllresumesIsChecked}&jobRole=${jobDescription}`,{responseType:'json'});
     const url = `${this.apiUrl}screen-resume?scanAllresumesIsChecked=${scanAllresumesIsChecked}`;
-    return this.http.post<ResumeAnalysis>(url, { jobDescription }, { responseType: 'json' });
+    return this.http.post<StartAnalysisResponse>(url, { jobDescription }, { responseType: 'json' });
 
   }
-  getAllAnalysiedResumes(pageNo:number,pageSize:number): Observable<ResumeAnalysis[]> {
-    return this.http.get<ResumeAnalysis[]>(`${this.apiUrl}getAllAnalysiedResumes?pageNo=${pageNo}&pageSize=${pageSize}`);
+  getAllAnalysiedResumes(pageNo: number, pageSize: number, sortBy?: string, sortingDirection?: string): Observable<ResumeAnalysis[]> {
+    return this.http.get<ResumeAnalysis[]>(`${this.apiUrl}getAllAnalysiedResumes?pageNo=${pageNo}&pageSize=${pageSize}&sortBy=${sortBy}&sortingDirection=${sortingDirection}`);
   }
   getAllDashboardDetails(): Observable<Dashboard> {
    return this.http.get<Dashboard>(this.apiUrl+'gellAllDashboardDetails');

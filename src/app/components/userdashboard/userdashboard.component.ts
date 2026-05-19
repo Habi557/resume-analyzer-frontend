@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastrService } from 'ngx-toastr';
 import { AuthHelperService } from 'src/app/helperclass/auth-helper.service';
+import { ApiResponse } from 'src/app/models/ApiResponse';
 import { Resume } from 'src/app/models/Resume';
 import { ResumeAnalysis } from 'src/app/models/ResumeAnalysis';
 import { LoginService } from 'src/app/services/login.service';
+import { ResumeService } from 'src/app/services/resume.service';
 import { UserdashboardService } from 'src/app/services/userdashboard.service';
 
 @Component({
@@ -12,7 +14,8 @@ import { UserdashboardService } from 'src/app/services/userdashboard.service';
   styleUrls: ['./userdashboard.component.scss']
 })
 export class UserdashboardComponent implements OnInit {
-  constructor(private loginService: LoginService, private authServiceHelper: AuthHelperService,private userdasbordService : UserdashboardService, private toaster: ToastrService) { }
+
+  constructor(private loginService: LoginService, private authServiceHelper: AuthHelperService,private userdasbordService : UserdashboardService,private resumeService : ResumeService, private toaster: ToastrService) { }
   // profileMenuOpen = false;
   // showUploadModal = false;
    user: any ;
@@ -37,24 +40,19 @@ export class UserdashboardComponent implements OnInit {
       }
     })
   }
-  // toggleProfileMenu() {
-  //   this.profileMenuOpen = !this.profileMenuOpen;
-  // }
-
-  // logout() {
-  //   this.authServiceHelper.logout();
-
-  // }
-  // closeUploadModal() {
-  //   this.showUploadModal = false;
-  // }
-  // openUploadModal() {
-  //   this.showUploadModal = true;
-  // }
-  // handleUploadComplete() {
-  //   this.toaster.success('Upload resume Success', 'Success');
-  //   this.closeUploadModal();
-  // }
+  deleteResume(resumeId: number) {
+    this.resumeService.deleteResume(resumeId).subscribe({
+      next: (response:ApiResponse<string>) => {
+        this.toaster.success(response.message);
+        this.loadUserData();
+      },
+      error: (err:any) => {
+        console.error('Error deleting resume:', err);
+        this.toaster.error('Failed to delete resume. Please try again.');
+      }
+    })
+  
+  }
   userStats = {
     totalResumes: 2,
     bestMatch: 72,

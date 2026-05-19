@@ -94,7 +94,6 @@ export class UploadresumeComponent {
 
       },
       error: (err: HttpErrorResponse) => {
-        debugger;
         this.isUploading = false;
         console.log(err)
         this.errorMessage = err.error.message || 'Upload failed. Please try again.';

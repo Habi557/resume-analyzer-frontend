@@ -1,0 +1,8 @@
+<p>analyze-component works!</p>
+<div *ngIf="status">
+      <p>Status: {{ status?.status }}</p>
+      <p>Progress: {{ status?.processedResume }} / {{ status?.totalResume }}</p>
+      <progress [value]="status?.processedResume" [max]="status?.totalResume"></progress>
+    </div>
+    <button (click)="startJob('job-123')">Start Polling</button>
+    <button (click)="stop()">Stop</button>

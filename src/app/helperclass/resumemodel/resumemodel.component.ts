@@ -123,7 +123,7 @@ sendInterviewInvite() {
     console.log("Saving candidate details for resume ID:", resumeDeatails);
     this.editResume.updateCandidateDetails(this.editResumeDetailsDto).subscribe({
       next: (response: string) => {
-        alert("Candidate details updated successfully.");
+        this.toaster.success(response, 'Success');
         this.editProfile = false;
       },
       error:(error)=>{

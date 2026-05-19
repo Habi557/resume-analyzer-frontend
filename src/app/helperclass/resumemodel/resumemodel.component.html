@@ -135,7 +135,7 @@
 
             </div>
           </div>
-          <div class="mb-5">
+          <div class="mb-5" [hidden]="['Selected', 'Rejected'].includes(resumeFilter.selectedStatus)">
             <label class="text-sm font-medium text-gray-400 mb-1 block">Interview Mode</label>
 
             <select [(ngModel)]="resumeFilter.interviewMode" class="w-full bg-[#1E293B] border border-[#475569] text-gray-200 
@@ -148,7 +148,7 @@
           </div>
 
           <!-- Date Picker -->
-          <div class="mb-5">
+          <div class="mb-5" [hidden]="['Selected', 'Rejected'].includes(resumeFilter.selectedStatus)">
             <label class="text-sm font-medium text-gray-400 mb-1 block">
               Select Interview Date
             </label>
@@ -184,7 +184,7 @@
 
             </div>
           </div>
-          <div>
+          <div [hidden]="['Selected', 'Rejected'].includes(resumeFilter.selectedStatus)">
             <label class="block text-sm font-medium text-gray-300 mb-1">Interview Time</label>
 
             <div class="relative">

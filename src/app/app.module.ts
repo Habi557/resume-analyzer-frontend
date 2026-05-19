@@ -27,7 +27,7 @@ import { Oauth2SucessComponent } from './components/oauth2-sucess/oauth2-sucess.
 import { Oauth2FailureComponent } from './components/oauth2-failure/oauth2-failure.component';
 import { ProfileComponent } from './components/profile/profile.component';
 import { ChatbotfinderComponent } from './components/chatbotfinder/chatbotfinder.component';
-
+import { AnalyzeComponent } from './components/analyze-component/analyze-component.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -48,7 +48,9 @@ import { ChatbotfinderComponent } from './components/chatbotfinder/chatbotfinder
     Oauth2SucessComponent,
     Oauth2FailureComponent,
     ProfileComponent,
-    ChatbotfinderComponent
+    ChatbotfinderComponent,
+    AnalyzeComponent
+    
     
   ],
   imports: [
