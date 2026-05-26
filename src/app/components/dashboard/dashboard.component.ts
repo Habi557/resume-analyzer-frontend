@@ -100,7 +100,7 @@ console.log('Running Environment:', environment);
                     next: (res: AnalyzeStatus) => {
                        // console.log('Job status:', res.status, res.processedResume, '/', res.totalResume);
                         //this.jobStatus = res; // ✅ bind to UI
-                        this.toaster.info(`Analysis ${res.status}: ${res.processedResume} of ${res.totalResume} resumes processed`, 'Analysis Status', { timeOut: 2000 });
+                        this.toaster.info(`Analysis ${res.status}: ${res.processedResume} of ${this.aiInsights?.totalResumes} resumes processed`, 'Analysis Status', { timeOut: 2000 });
                         if(res.processedResume>this.previouscount){
                           this.previouscount =res.processedResume;
                           this.getAllDashboardDetails();
